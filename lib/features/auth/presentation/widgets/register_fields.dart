@@ -26,14 +26,9 @@ class RegisterFields extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const AppText(
-          'الاسم الكامل',
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          textAlign: TextAlign.right,
-        ),
+        const AppText.title('الاسم الكامل', textAlign: TextAlign.right),
 
-        const Gap(10),
+        const Gap(5),
 
         AppTextField(
           controller: nameController,
@@ -46,14 +41,9 @@ class RegisterFields extends StatelessWidget {
 
         const Gap(AppSpacing.md),
 
-        const AppText(
-          'البريد الإلكتروني',
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          textAlign: TextAlign.right,
-        ),
+        const AppText.title('البريد الإلكتروني', textAlign: TextAlign.right),
 
-        const Gap(10),
+        const Gap(5),
 
         AppTextField(
           controller: emailController,
@@ -65,14 +55,9 @@ class RegisterFields extends StatelessWidget {
 
         const Gap(AppSpacing.md),
 
-        const AppText(
-          'رقم الجوال',
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          textAlign: TextAlign.right,
-        ),
+        const AppText.title('رقم الجوال', textAlign: TextAlign.right),
 
-        const Gap(10),
+        const Gap(5),
 
         AppTextField(
           controller: phoneController,
@@ -84,14 +69,9 @@ class RegisterFields extends StatelessWidget {
 
         const Gap(AppSpacing.md),
 
-        const AppText(
-          'كلمة المرور',
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          textAlign: TextAlign.right,
-        ),
+        const AppText.title('كلمة المرور', textAlign: TextAlign.right),
 
-        const Gap(10),
+        const Gap(5),
 
         PasswordTextField(controller: passwordController),
 

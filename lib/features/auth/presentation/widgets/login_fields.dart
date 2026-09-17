@@ -19,15 +19,10 @@ class LoginFields extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AppText(
-          'البريد الإلكتروني',
-          fontSize: 12,
-          fontWeight: FontWeight.w700,
-          textAlign: TextAlign.right,
-        ),
+        const AppText.title('البريد الإلكتروني', textAlign: TextAlign.right),
+
         const Gap(10),
 
         AppTextField(
@@ -39,13 +34,11 @@ class LoginFields extends StatelessWidget {
         ),
 
         const Gap(AppSpacing.md),
-        AppText(
-          'كلمة المرور',
-          fontSize: 12,
-          fontWeight: FontWeight.w700,
-          textAlign: TextAlign.right,
-        ),
+
+        const AppText.title('كلمة المرور', textAlign: TextAlign.right),
+
         const Gap(AppSpacing.xs),
+
         PasswordTextField(controller: passwordController),
       ],
     );

@@ -1,15 +1,12 @@
-import 'package:digital_product/features/auth/presentation/views/register_view.dart';
-import 'package:digital_product/features/auth/presentation/widgets/login_fields.dart';
+import 'package:digital_product/core/constants/app_colors.dart';
+import 'package:digital_product/features/auth/presentation/widgets/login_content.dart';
+import 'package:digital_product/features/auth/presentation/widgets/responsive_auth_layout.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_spacing.dart';
-import '../../../../core/widgets/app_button.dart';
-import '../../../../core/widgets/app_text.dart';
-import '../widgets/auth_header.dart';
-import 'package:gap/gap.dart';
 
 class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+  final VoidCallback onRegisterPressed;
+
+  const LoginView({super.key, required this.onRegisterPressed});
 
   @override
   State<LoginView> createState() => _LoginViewState();
@@ -17,147 +14,84 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   final TextEditingController _emailController = TextEditingController();
+
   final TextEditingController _passwordController = TextEditingController();
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+
     super.dispose();
   }
 
   void _validateForm() {
-    _formKey.currentState?.validate();
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    if (_formKey.currentState?.validate() ?? false) {
+      // Login logic
+    }
+  }
+
+  void _onForgotPassword() {
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    // Forgot password navigation
   }
 
   @override
   Widget build(BuildContext context) {
-    print('LoginView build called');
-    print('===================================================');
     return Scaffold(
       backgroundColor: AppColors.appBackground,
+      resizeToAvoidBottomInset: true,
 
-      body: Center(
-        child: SafeArea(
-          top: false,
-          child: GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final horizontalPadding = constraints.maxWidth < 420
-                    ? 20.0
-                    : 28.0;
+      body: SafeArea(
+        child: GestureDetector(
+          behavior: HitTestBehavior.translucent,
 
-                return SingleChildScrollView(
-                  keyboardDismissBehavior:
-                      ScrollViewKeyboardDismissBehavior.onDrag,
-                  padding: EdgeInsets.fromLTRB(
-                    horizontalPadding,
-                    AppSpacing.sm,
-                    horizontalPadding,
-                    AppSpacing.xl,
-                  ),
+          onTap: () {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
 
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 430),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const AuthHeader(),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return CustomScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
 
-                          const Gap(AppSpacing.xl),
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                      ),
 
-                          const AppText(
-                            'تسجيل الدخول',
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                            textAlign: TextAlign.right,
-                          ),
+                      child: ResponsiveAuthLayout(
+                        centerVertically: true,
 
-                          const Gap(AppSpacing.xs),
+                        child: Form(
+                          key: _formKey,
 
-                          const AppText(
-                            'أدخل بيانات حسابك للمتابعة',
-                            fontSize: 14,
-
-                            color: AppColors.bodyText,
-                            textAlign: TextAlign.right,
-                          ),
-
-                          const Gap(AppSpacing.md),
-                          LoginFields(
+                          child: LoginContent(
                             emailController: _emailController,
+
                             passwordController: _passwordController,
+
+                            onLoginPressed: _validateForm,
+
+                            onForgotPasswordPressed: _onForgotPassword,
+
+                            onRegisterPressed: widget.onRegisterPressed,
                           ),
-                          const Gap(AppSpacing.sm),
-
-                          Align(
-                            alignment: AlignmentDirectional.centerStart,
-                            child: TextButton(
-                              onPressed: () {},
-                              child: const AppText(
-                                'نسيت كلمة المرور؟',
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                usePrimaryColor: false,
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: AppSpacing.sm),
-
-                          AppButton(
-                            title: 'تسجيل الدخول',
-                            onPressed: _validateForm,
-                            backgroundColor: AppColors.headingText,
-                            foregroundColor: AppColors.appBackground,
-                          ),
-
-                          const SizedBox(height: AppSpacing.xl),
-
-                          Center(
-                            child: Wrap(
-                              alignment: WrapAlignment.center,
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              children: [
-                                const AppText(
-                                  'ليس لديك حساب؟ ',
-                                  fontSize: 14,
-                                  height: 1.5,
-                                  color: AppColors.bodyText,
-                                ),
-                                InkWell(
-                                  child: AppText(
-                                    'إنشاء حساب جديد',
-                                    fontSize: 14,
-                                    color: AppColors.tealPrimary,
-                                    fontWeight: FontWeight.w700,
-                                    usePrimaryColor: false,
-                                  ),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const RegisterView(),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
-                );
-              },
-            ),
+                ],
+              );
+            },
           ),
         ),
       ),

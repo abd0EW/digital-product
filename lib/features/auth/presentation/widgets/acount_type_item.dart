@@ -23,7 +23,7 @@ class AccountTypeItem extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOut,
-        height: 46,
+        height: 42,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
           color: isSelected
@@ -40,10 +40,8 @@ class AccountTypeItem extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AppText(
+              AppText.title(
                 title,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
                 color: isSelected ? AppColors.tealPrimary : AppColors.bodyText,
               ),
 

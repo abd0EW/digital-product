@@ -2,13 +2,17 @@ import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/constants/app_spacing.dart';
 import 'package:digital_product/core/widgets/app_button.dart';
 import 'package:digital_product/core/widgets/app_text.dart';
-import 'package:digital_product/features/auth/presentation/views/login_view.dart';
+
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 class RegisterActionsSection extends StatelessWidget {
-  const RegisterActionsSection({super.key, required this.onRegisterPressed});
-
+  const RegisterActionsSection({
+    super.key,
+    required this.onRegisterPressed,
+    required this.goToLogin,
+  });
+  final VoidCallback goToLogin;
   final VoidCallback onRegisterPressed;
 
   @override
@@ -30,22 +34,16 @@ class RegisterActionsSection extends StatelessWidget {
             alignment: WrapAlignment.center,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              const AppText(
+              const AppText.body(
                 'لديك حساب بالفعل؟ ',
-                fontSize: 14,
                 color: AppColors.bodyText,
               ),
 
               InkWell(
-                onTap: () => Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginView()),
-                ),
-                child: const AppText(
+                onTap: goToLogin,
+                child: const AppText.title(
                   'تسجيل الدخول',
-                  fontSize: 14,
                   color: AppColors.tealPrimary,
-                  fontWeight: FontWeight.w700,
                 ),
               ),
             ],

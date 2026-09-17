@@ -52,12 +52,7 @@ class AppButton extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  AppText(
-                    title,
-                    color: foregroundColor,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  Flexible(child: AppText.title(title, color: foregroundColor)),
                 ],
               ),
       ),

@@ -1,41 +1,55 @@
-// import 'package:digital_product/features/auth/presentation/views/login_view.dart';
-// import 'package:digital_product/features/auth/presentation/views/register_view.dart';
-// import 'package:flutter/material.dart';
+import 'package:digital_product/features/auth/presentation/views/login_view.dart';
+import 'package:digital_product/features/auth/presentation/views/register_view.dart';
+import 'package:flutter/material.dart';
 
-// class AuthView extends StatefulWidget {
-//   const AuthView({super.key});
+class AuthView extends StatefulWidget {
+  final int initialIndex;
 
-//   @override
-//   State<AuthView> createState() => _AuthViewState();
-// }
+  const AuthView({super.key, this.initialIndex = 0});
 
-// class _AuthViewState extends State<AuthView> {
-//   bool _showLogin = true;
+  @override
+  State<AuthView> createState() => _AuthViewState();
+}
 
-//   void _showRegister() {
-//     setState(() {
-//       _showLogin = false;
-//     });
-//   }
+class _AuthViewState extends State<AuthView> {
+  late int _currentIndex;
 
-//   void _showLoginView() {
-//     setState(() {
-//       _showLogin = true;
-//     });
-//   }
+  @override
+  void initState() {
+    super.initState();
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return IndexedStack(
-//       index: _showLogin ? 0 : 1,
-//       children: [
-//         LoginView(
-//           onRegisterPressed: _showRegister,
-//         ),
-//         RegisterView(
-//           onLoginPressed: _showLoginView,
-//         ),
-//       ],
-//     );
-//   }
-// }
+    _currentIndex = widget.initialIndex;
+  }
+
+  void _goToRegister() {
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    if (_currentIndex == 1) return;
+
+    setState(() {
+      _currentIndex = 1;
+    });
+  }
+
+  void _goToLogin() {
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    if (_currentIndex == 0) return;
+
+    setState(() {
+      _currentIndex = 0;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IndexedStack(
+      index: _currentIndex,
+      children: [
+        LoginView(onRegisterPressed: _goToRegister),
+
+        RegisterView(onLoginPressed: _goToLogin),
+      ],
+    );
+  }
+}

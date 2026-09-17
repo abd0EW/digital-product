@@ -1,3 +1,4 @@
+import 'package:digital_product/core/constants/app_spacing.dart';
 import 'package:digital_product/features/auth/presentation/widgets/acount_type_item.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class AccountTypeSelector extends StatelessWidget {
       valueListenable: valueListenable,
       builder: (context, value, child) {
         return Row(
+          spacing: AppSpacing.xs,
           children: [
             Expanded(
               child: AccountTypeItem(
@@ -31,8 +33,6 @@ class AccountTypeSelector extends StatelessWidget {
                 },
               ),
             ),
-
-            const SizedBox(width: 8),
 
             Expanded(
               child: AccountTypeItem(

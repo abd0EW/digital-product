@@ -26,11 +26,7 @@ class AuthHeader extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
-        const AppText(
-          'منصة الخدمات الرقمية',
-          fontSize: 15,
-          fontWeight: FontWeight.w700,
-        ),
+        const AppText.title('منصة الخدمات الرقمية'),
       ],
     );
   }
