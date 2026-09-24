@@ -11,12 +11,7 @@ class AppColors {
   static const Color tealAccent = Color.fromRGBO(9, 119, 110, 1);
 
   // Background Colors
-  static const Color appBackground = Color.from(
-    alpha: 1,
-    red: 1,
-    green: 1,
-    blue: 1,
-  );
+  static const Color appBackground = Color.fromARGB(255, 255, 255, 255);
   static const Color cardBackground = Color(0xFFFFFFFF);
 
   // Text Colors

@@ -5,13 +5,13 @@ class AppResponsive {
 
   static double scaleFactor(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    if (width < 600) {
-      return width / 400;
+    if (width < 700) {
+      return width / 500;
     }
-    if (width < 900) {
-      return width / 700;
+    if (width < 1000) {
+      return width / 800;
     }
-    return width / 1000;
+    return width / 1200;
   }
 
   static double reponsiveFontSize(
@@ -19,8 +19,8 @@ class AppResponsive {
     required double fontSize,
   }) {
     final fontSizeReponsive = fontSize * scaleFactor(context);
-    final lower = fontSize * 0.8;
-    final upper = fontSize * 1.2;
+    final lower = fontSize * 0.9;
+    final upper = fontSize * 1.3;
     return fontSizeReponsive.clamp(lower, upper);
   }
 }

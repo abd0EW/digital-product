@@ -1,12 +1,12 @@
-import 'package:digital_product/features/services/data/models/service_model.dart';
+import 'package:digital_product/features/dashboard_user/services/data/models/service_model.dart';
 import 'package:flutter/material.dart';
 
 class AppShowModelBottomSheet {
   static Future<dynamic> appShowModalBottomSheet(
     BuildContext context,
-    ServiceModel service,
-    Widget builder,
-  ) {
+    Widget builder, {
+    ServiceModel? service,
+  }) {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,

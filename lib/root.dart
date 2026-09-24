@@ -1,9 +1,9 @@
 import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/constants/app_radius.dart';
-import 'package:digital_product/features/notifications/presentation/views/notifications_view.dart';
-import 'package:digital_product/features/orders/presentation/views/orders_view.dart';
-import 'package:digital_product/features/profile/presentation/views/profile_view.dart';
-import 'package:digital_product/features/services/presentation/views/services_view.dart';
+import 'package:digital_product/features/dashboard_user/notifications/presentation/views/notifications_view.dart';
+import 'package:digital_product/features/dashboard_user/orders/presentation/views/orders_view.dart';
+import 'package:digital_product/features/dashboard_user/profile/presentation/views/profile_view.dart';
+import 'package:digital_product/features/dashboard_user/services/presentation/views/services_view.dart';
 import 'package:flutter/material.dart';
 
 class Root extends StatefulWidget {

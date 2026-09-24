@@ -1,0 +1,43 @@
+import 'package:digital_product/features/dashboard_worker/orders/data/models/worker_order_model.dart';
+
+const List<WorkerOrderModel> assignedWorkerOrders = [
+  WorkerOrderModel(
+    serviceName: 'التدقيق اللغوي',
+    customerName: 'سارة العتيبي',
+    description: 'فحص شامل للنص وتصحيح الأخطاء وتحسين الأسلوب.',
+    orderNumber: '#1042',
+    quantity: '10 صفحات',
+    date: '28 أغسطس 2026',
+    status: WorkerOrderStatus.newOrder,
+    paymentType: WorkerPaymentType.beforeDelivery,
+    paymentStatus: WorkerPaymentStatus.paid,
+    deadline: '30 أغسطس 2026',
+    attachmentName: 'البحث_العلمي.pdf',
+    attachmentSize: '2.4 MB',
+  ),
+  WorkerOrderModel(
+    serviceName: 'عروض PowerPoint',
+    customerName: 'منى الشهري',
+    description: 'تصميم عرض تقديمي احترافي ومتناسق.',
+    orderNumber: '#1062',
+    quantity: '8 شرائح',
+    date: '25 أغسطس 2026',
+    status: WorkerOrderStatus.inProgress,
+    paymentType: WorkerPaymentType.afterWork,
+    paymentStatus: WorkerPaymentStatus.unpaid,
+    deadline: '2 سبتمبر 2026',
+    attachmentName: 'متطلبات_العرض.docx',
+    attachmentSize: '1.1 MB',
+  ),
+  WorkerOrderModel(
+    serviceName: 'كتابة تقرير',
+    customerName: 'أحمد الزهراني',
+    description: 'كتابة تقرير واضح ومنظم حسب المتطلبات.',
+    orderNumber: '#1038',
+    quantity: '3 صفحات',
+    date: '21 أغسطس 2026',
+    status: WorkerOrderStatus.completed,
+    paymentType: WorkerPaymentType.afterWork,
+    paymentStatus: WorkerPaymentStatus.paid,
+  ),
+];

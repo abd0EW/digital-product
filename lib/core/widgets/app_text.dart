@@ -1,3 +1,4 @@
+import 'package:digital_product/core/constants/app_responsive%20.dart';
 import 'package:flutter/material.dart';
 import 'package:digital_product/core/constants/app_colors.dart';
 
@@ -8,6 +9,7 @@ class AppText extends StatelessWidget {
     this.color = AppColors.headingText,
     this.textAlign,
     this.maxLines,
+
     this.overflow = TextOverflow.ellipsis,
   }) : fontSize = 22,
        fontWeight = FontWeight.w800,
@@ -19,6 +21,7 @@ class AppText extends StatelessWidget {
     this.color = AppColors.headingText,
     this.textAlign,
     this.maxLines,
+
     this.overflow = TextOverflow.ellipsis,
   }) : fontSize = 18,
        fontWeight = FontWeight.w500,
@@ -64,7 +67,7 @@ class AppText extends StatelessWidget {
       overflow: maxLines != null ? overflow : null,
       style: TextStyle(
         fontFamily: 'Parastoo',
-        fontSize: fontSize,
+        fontSize: AppResponsive.reponsiveFontSize(context, fontSize: fontSize),
         fontWeight: fontWeight,
         height: height,
         color: color,
