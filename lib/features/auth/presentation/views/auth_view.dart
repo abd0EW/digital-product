@@ -1,6 +1,9 @@
+import 'package:digital_product/features/auth/presentation/viewmodels/auth_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/auth_state.dart';
 import 'package:digital_product/features/auth/presentation/views/login_view.dart';
 import 'package:digital_product/features/auth/presentation/views/register_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AuthView extends StatefulWidget {
   final int initialIndex;
@@ -43,13 +46,39 @@ class _AuthViewState extends State<AuthView> {
 
   @override
   Widget build(BuildContext context) {
-    return IndexedStack(
-      index: _currentIndex,
-      children: [
-        LoginView(onRegisterPressed: _goToRegister),
+    return BlocListener<AuthCubit, AuthState>(
+      listener: (context, state) {
+        if (state is AuthFailure) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text(state.message)));
+        }
 
-        RegisterView(onLoginPressed: _goToLogin),
-      ],
+        if (state is AuthRegistrationSuccess) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'تم إنشاء الحساب بنجاح، تحقق من بريدك الإلكتروني.',
+                ),
+              ),
+            );
+
+          _goToLogin();
+        }
+
+        if (state is AuthLoginSuccess) {
+          // هنربط التنقل هنا بعد ما نجيب Profile المستخدم.
+        }
+      },
+      child: IndexedStack(
+        index: _currentIndex,
+        children: [
+          LoginView(onRegisterPressed: _goToRegister),
+          RegisterView(onLoginPressed: _goToLogin),
+        ],
+      ),
     );
   }
 }

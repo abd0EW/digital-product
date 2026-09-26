@@ -1,7 +1,13 @@
+import 'package:digital_product/features/auth/data/remote_data_source/auth_remote_data_source_impl.dart';
+import 'package:digital_product/features/auth/domain/repositories/auth_repository.dart';
 import 'package:digital_product/root.dart';
+import 'package:digital_product/features/auth/data/remote_data_source/auth_remote_data_source.dart';
+import 'package:digital_product/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/auth_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
@@ -21,17 +27,31 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      locale: const Locale('ar', 'SA'),
-      supportedLocales: const [Locale('ar', 'SA')],
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      debugShowCheckedModeBanner: false,
-      title: 'Digital Product',
-      home: const Root(),
+    return BlocProvider(
+      create: (_) => AuthCubit(
+        AuthRepositoryImpl(
+          authRemoteDataSource: AuthRemoteDataSourceImpl(
+            client: Supabase.instance.client,
+          ),
+        ),
+        repository: AuthRepositoryImpl(
+          authRemoteDataSource: AuthRemoteDataSourceImpl(
+            client: Supabase.instance.client,
+          ),
+        ),
+      ),
+      child: MaterialApp(
+        locale: const Locale('ar', 'SA'),
+        supportedLocales: const [Locale('ar', 'SA')],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        debugShowCheckedModeBanner: false,
+        title: 'Digital Product',
+        home: const Root(),
+      ),
     );
   }
 }

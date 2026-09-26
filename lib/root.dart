@@ -1,19 +1,29 @@
 import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/constants/app_radius.dart';
+import 'package:digital_product/splash_view.dart';
 import 'package:digital_product/features/dashboard_user/notifications/presentation/views/notifications_view.dart';
 import 'package:digital_product/features/dashboard_user/orders/presentation/views/orders_view.dart';
 import 'package:digital_product/features/dashboard_user/profile/presentation/views/profile_view.dart';
 import 'package:digital_product/features/dashboard_user/services/presentation/views/services_view.dart';
 import 'package:flutter/material.dart';
 
-class Root extends StatefulWidget {
+class Root extends StatelessWidget {
   const Root({super.key});
 
   @override
-  State<Root> createState() => _RootState();
+  Widget build(BuildContext context) {
+    return const SplashView();
+  }
 }
 
-class _RootState extends State<Root> {
+class UserRootView extends StatefulWidget {
+  const UserRootView({super.key});
+
+  @override
+  State<UserRootView> createState() => _UserRootViewState();
+}
+
+class _UserRootViewState extends State<UserRootView> {
   int currentIndex = 0;
 
   late final PageController _pageController;

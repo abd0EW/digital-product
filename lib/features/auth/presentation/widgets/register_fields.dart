@@ -13,12 +13,14 @@ class RegisterFields extends StatelessWidget {
     required this.emailController,
     required this.phoneController,
     required this.passwordController,
+    required this.confirmPasswordController,
   });
 
   final TextEditingController nameController;
   final TextEditingController emailController;
   final TextEditingController phoneController;
   final TextEditingController passwordController;
+  final TextEditingController confirmPasswordController;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,7 @@ class RegisterFields extends StatelessWidget {
 
           keyboardType: TextInputType.name,
           textInputAction: TextInputAction.next,
-          validator: AppValidators.requiredField,
+          validator: (value) {},
         ),
 
         const Gap(AppSpacing.md),
@@ -73,7 +75,24 @@ class RegisterFields extends StatelessWidget {
 
         const Gap(5),
 
-        PasswordTextField(controller: passwordController),
+        PasswordTextField(
+          controller: passwordController,
+          validator: (value) {},
+          hintText: '',
+        ),
+
+        const Gap(AppSpacing.md),
+
+        const AppText.title('تأكيد كلمة المرور', textAlign: TextAlign.right),
+
+        const Gap(5),
+
+        PasswordTextField(
+          controller: confirmPasswordController,
+          hintText: 'أعد كتابة كلمة المرور',
+          validator: (value) =>
+              AppValidators.confirmPassword(value, passwordController.text),
+        ),
 
         const Gap(AppSpacing.lg),
       ],

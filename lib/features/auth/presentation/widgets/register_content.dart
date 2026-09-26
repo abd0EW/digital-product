@@ -14,11 +14,13 @@ class RegisterContent extends StatelessWidget {
   final TextEditingController emailController;
   final TextEditingController phoneController;
   final TextEditingController passwordController;
+  final TextEditingController confirmPasswordController;
 
   final ValueListenable<AcountType> accountType;
   final VoidCallback goToLogin;
   final ValueChanged<AcountType> onAccountTypeChanged;
   final VoidCallback onRegisterPressed;
+  final bool isLoading;
 
   const RegisterContent({
     super.key,
@@ -26,10 +28,12 @@ class RegisterContent extends StatelessWidget {
     required this.emailController,
     required this.phoneController,
     required this.passwordController,
+    required this.confirmPasswordController,
     required this.accountType,
     required this.onAccountTypeChanged,
     required this.onRegisterPressed,
     required this.goToLogin,
+    required this.isLoading,
   });
 
   @override
@@ -62,11 +66,11 @@ class RegisterContent extends StatelessWidget {
           emailController: emailController,
           phoneController: phoneController,
           passwordController: passwordController,
+          confirmPasswordController: confirmPasswordController,
         ),
 
         RegisterActionsSection(
           goToLogin: goToLogin,
-
           onRegisterPressed: onRegisterPressed,
         ),
       ],

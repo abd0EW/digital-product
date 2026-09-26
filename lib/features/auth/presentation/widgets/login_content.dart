@@ -15,6 +15,7 @@ class LoginContent extends StatelessWidget {
   final VoidCallback onLoginPressed;
   final VoidCallback onRegisterPressed;
   final VoidCallback onForgotPasswordPressed;
+  final bool isLoading;
 
   const LoginContent({
     super.key,
@@ -23,6 +24,7 @@ class LoginContent extends StatelessWidget {
     required this.onLoginPressed,
     required this.onRegisterPressed,
     required this.onForgotPasswordPressed,
+    required this.isLoading,
   });
 
   @override
@@ -76,6 +78,7 @@ class LoginContent extends StatelessWidget {
         AppButton(
           title: 'تسجيل الدخول',
           onPressed: onLoginPressed,
+          isLoading: isLoading,
           backgroundColor: AppColors.headingText,
           foregroundColor: AppColors.appBackground,
         ),

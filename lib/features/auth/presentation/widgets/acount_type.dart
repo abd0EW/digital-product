@@ -3,7 +3,7 @@ import 'package:digital_product/features/auth/presentation/widgets/acount_type_i
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-enum AcountType { customer, serviceProvider }
+enum AcountType { user, owner, worker }
 
 class AccountTypeSelector extends StatelessWidget {
   const AccountTypeSelector({
@@ -27,9 +27,9 @@ class AccountTypeSelector extends StatelessWidget {
               child: AccountTypeItem(
                 title: 'عميل',
                 icon: Icons.person,
-                isSelected: value == AcountType.customer,
+                isSelected: value == AcountType.user,
                 onTap: () {
-                  onChanged(AcountType.customer);
+                  onChanged(AcountType.user);
                 },
               ),
             ),
@@ -38,9 +38,9 @@ class AccountTypeSelector extends StatelessWidget {
               child: AccountTypeItem(
                 title: 'مزود خدمة',
                 icon: Icons.business_outlined,
-                isSelected: value == AcountType.serviceProvider,
+                isSelected: value == AcountType.owner,
                 onTap: () {
-                  onChanged(AcountType.serviceProvider);
+                  onChanged(AcountType.owner);
                 },
               ),
             ),
