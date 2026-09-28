@@ -1,7 +1,9 @@
+import 'package:digital_product/core/utils/app_snackbar.dart';
 import 'package:digital_product/features/auth/presentation/viewmodels/auth_cubit.dart';
 import 'package:digital_product/features/auth/presentation/viewmodels/auth_state.dart';
 import 'package:digital_product/features/auth/presentation/views/login_view.dart';
 import 'package:digital_product/features/auth/presentation/views/register_view.dart';
+import 'package:digital_product/root.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -49,27 +51,22 @@ class _AuthViewState extends State<AuthView> {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthFailure) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(content: Text(state.message)));
+          AppSnackbar.error(context, message: state.message.toString());
         }
 
         if (state is AuthRegistrationSuccess) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'تم إنشاء الحساب بنجاح، تحقق من بريدك الإلكتروني.',
-                ),
-              ),
-            );
-
+          AppSnackbar.success(
+            context,
+            message: "تم إنشاء الحساب بنجاح، تحقق من بريدك الإلكتروني",
+          );
           _goToLogin();
         }
 
         if (state is AuthLoginSuccess) {
-          // هنربط التنقل هنا بعد ما نجيب Profile المستخدم.
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => UserRootView()),
+          );
         }
       },
       child: IndexedStack(

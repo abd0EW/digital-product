@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/widgets/app_search_silver_appbar.dart';
 import 'package:digital_product/core/widgets/app_show_model_bottom_sheet.dart';

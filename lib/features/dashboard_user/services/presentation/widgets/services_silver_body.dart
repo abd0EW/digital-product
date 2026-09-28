@@ -18,9 +18,7 @@ class ServicesSliverBody extends StatelessWidget {
           return [];
         }
 
-        return state.toggleIndex == 0
-            ? (state.general ?? [])
-            : (state.educational ?? []);
+        return state.toggleIndex == 0 ? (state.general) : (state.educational);
       },
       builder: (context, services) {
         return SerivcesSilverSuccessState(

@@ -1,8 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:digital_product/core/errors/app_exception.dart';
+import 'package:digital_product/core/errors/app_fail.dart';
 import 'package:digital_product/features/auth/data/remote_data_source/auth_remote_data_source.dart';
 import 'package:digital_product/features/auth/domain/enums/user_role.dart';
-import 'package:digital_product/features/auth/domain/failures/auth_error_message_handler.dart';
 import 'package:digital_product/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -11,7 +10,7 @@ class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _authRemoteDataSource;
 
   @override
-  Future<Either<AppException, Unit>> login({
+  Future<Either<AppFail, Unit>> login({
     required String email,
     required String password,
   }) {
@@ -21,7 +20,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<AppException, Unit>> register({
+  Future<Either<AppFail, Unit>> register({
     required String fullName,
     required String email,
     required String phone,
@@ -40,17 +39,17 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<AppException, Unit>> logout() {
+  Future<Either<AppFail, Unit>> logout() {
     return _handleAuthAction(_authRemoteDataSource.signOut);
   }
 
   @override
-  Future<Either<AppException, Unit>> forgotPassword({required String email}) {
+  Future<Either<AppFail, Unit>> forgotPassword({required String email}) {
     return _handleAuthAction(() => _authRemoteDataSource.resetPassword(email));
   }
 
   @override
-  Future<Either<AppException, Unit>> resendVerificationEmail({
+  Future<Either<AppFail, Unit>> resendVerificationEmail({
     required String email,
   }) {
     return _handleAuthAction(
@@ -59,29 +58,43 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<AppException, bool>> checkEmailVerification() async {
+  Future<Either<AppFail, bool>> checkEmailVerification() async {
     try {
       final isVerified = await _authRemoteDataSource.checkEmailVerification();
 
       return Right(isVerified);
-    } on AppException catch (exception) {
-      return Left(
-        AuthErrorMessageHandler.getMessage(exception) as AppException,
-      );
+    } on AppFail catch (exception) {
+      return Left(exception);
     }
   }
 
-  Future<Either<AppException, Unit>> _handleAuthAction(
+  @override
+  Future<Either<AppFail, Unit>> updatePassword({
+    required String newPassword,
+  }) async {
+    // await _authRemoteDataSource.updatePassword(newPassword);
+    //  return Right(isVerified);
+    // } on AppFail catch (exception) {
+    //   return Left(exception);
+    // }
+
+    try {
+      await _authRemoteDataSource.updatePassword(newPassword);
+      return Right(unit);
+    } on AppFail catch (exception) {
+      return Left(exception);
+    }
+  }
+
+  Future<Either<AppFail, Unit>> _handleAuthAction(
     Future<void> Function() action,
   ) async {
     try {
       await action();
 
       return const Right(unit);
-    } on AppException catch (exception) {
-      return Left(
-        AuthErrorMessageHandler.getMessage(exception) as AppException,
-      );
+    } on AppFail catch (exception) {
+      return Left(exception);
     }
   }
 }

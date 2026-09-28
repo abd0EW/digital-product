@@ -18,9 +18,7 @@ class ServiceCardActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      textDirection: TextDirection.rtl,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,12 +38,12 @@ class ServiceCardActions extends StatelessWidget {
                   serviceModel.currency,
                   color: AppColors.tealPrimary,
                 ),
+
+                AppText.caption(serviceModel.pricingUnit),
               ],
             ),
-
-            const SizedBox(height: 2),
-
-            AppText.caption(serviceModel.pricingUnit),
+            const SizedBox(height: 3),
+            AppText.caption(serviceModel.paymentTiming),
           ],
         ),
 

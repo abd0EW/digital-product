@@ -32,6 +32,10 @@ final class AuthVerificationEmailSent extends AuthState {
   const AuthVerificationEmailSent();
 }
 
+final class AuthUpdatedPassword extends AuthState {
+  const AuthUpdatedPassword();
+}
+
 final class AuthVerificationStatus extends AuthState {
   const AuthVerificationStatus({required this.isVerified});
 

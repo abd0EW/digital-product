@@ -18,7 +18,7 @@ class AuthSwitchRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Wrap(
-        alignment: WrapAlignment.center,
+        alignment: WrapAlignment.spaceBetween,
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           AppText.body('$text ', color: AppColors.bodyText),

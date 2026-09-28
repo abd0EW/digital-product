@@ -18,4 +18,5 @@ abstract interface class AuthRemoteDataSource {
   Future<void> resendVerificationEmail(String email);
 
   Future<bool> checkEmailVerification();
+  Future<void> updatePassword(String newPassword);
 }

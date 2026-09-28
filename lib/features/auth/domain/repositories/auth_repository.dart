@@ -1,14 +1,14 @@
 import 'package:dartz/dartz.dart';
-import 'package:digital_product/core/errors/app_exception.dart';
+import 'package:digital_product/core/errors/app_fail.dart';
 import 'package:digital_product/features/auth/domain/enums/user_role.dart';
 
 abstract interface class AuthRepository {
-  Future<Either<AppException, Unit>> login({
+  Future<Either<AppFail, Unit>> login({
     required String email,
     required String password,
   });
 
-  Future<Either<AppException, Unit>> register({
+  Future<Either<AppFail, Unit>> register({
     required String fullName,
     required String email,
     required String phone,
@@ -16,13 +16,14 @@ abstract interface class AuthRepository {
     required UserRole role,
   });
 
-  Future<Either<AppException, Unit>> logout();
+  Future<Either<AppFail, Unit>> logout();
 
-  Future<Either<AppException, Unit>> forgotPassword({required String email});
+  Future<Either<AppFail, Unit>> forgotPassword({required String email});
 
-  Future<Either<AppException, Unit>> resendVerificationEmail({
+  Future<Either<AppFail, Unit>> resendVerificationEmail({
     required String email,
   });
 
-  Future<Either<AppException, bool>> checkEmailVerification();
+  Future<Either<AppFail, Unit>> updatePassword({required String newPassword});
+  Future<Either<AppFail, bool>> checkEmailVerification();
 }
