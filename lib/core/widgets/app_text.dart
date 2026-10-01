@@ -12,7 +12,7 @@ class AppText extends StatelessWidget {
 
     this.overflow = TextOverflow.ellipsis,
   }) : fontSize = 22,
-       fontWeight = FontWeight.w800,
+       fontWeight = FontWeight.bold,
        height = 1;
 
   const AppText.switches(

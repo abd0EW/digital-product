@@ -3,19 +3,14 @@ import 'package:digital_product/core/widgets/app_text.dart';
 import 'package:flutter/material.dart';
 
 class OrderStatusBadge extends StatelessWidget {
-  const OrderStatusBadge({required this.status, super.key});
-
-  final OrderStatus status;
+  const OrderStatusBadge({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-      decoration: BoxDecoration(
-        color: status.backgroundColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: AppText.caption(status.label, color: status.color),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
+      child: AppText.caption("status.label"),
     );
   }
 }

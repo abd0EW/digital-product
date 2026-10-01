@@ -3,8 +3,8 @@ import 'package:digital_product/core/widgets/app_text.dart';
 import 'package:digital_product/features/dashboard_user/services/data/models/service_model.dart';
 import 'package:flutter/material.dart';
 
-class ServiceOrderHeader extends StatelessWidget {
-  const ServiceOrderHeader({super.key, required this.service});
+class CreateOrderHeader extends StatelessWidget {
+  const CreateOrderHeader({super.key, required this.service});
 
   final ServiceModel service;
 

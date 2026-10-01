@@ -23,16 +23,16 @@ class OrderSummaryCard extends StatelessWidget {
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: AppText.title(
-                  order.serviceName,
+                  "الخدمه",
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              OrderStatusBadge(status: order.status),
+              OrderStatusBadge(),
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
-          AppText.body(order.description, color: AppColors.bodyText),
+          AppText.body("الوصف", color: AppColors.bodyText),
         ],
       ),
     );

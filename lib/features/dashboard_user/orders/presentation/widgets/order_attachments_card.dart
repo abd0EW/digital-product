@@ -31,14 +31,11 @@ class OrderAttachmentsCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AppText.title(
-                      order.attachmentName ?? 'عرض_تقديمي.pdf',
+                      'عرض_تقديمي.pdf',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    AppText.caption(
-                      order.attachmentSize ?? '2.4 MB',
-                      color: AppColors.bodyText,
-                    ),
+                    AppText.caption('2.4 MB', color: AppColors.bodyText),
                   ],
                 ),
               ),

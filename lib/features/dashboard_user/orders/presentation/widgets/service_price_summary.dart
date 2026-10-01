@@ -3,9 +3,14 @@ import 'package:digital_product/core/widgets/app_text.dart';
 import 'package:flutter/material.dart';
 
 class ServicePriceSummary extends StatelessWidget {
-  const ServicePriceSummary({super.key, required this.totalPrice});
+  const ServicePriceSummary({
+    super.key,
+    required this.totalPrice,
+    required this.currency,
+  });
 
   final double totalPrice;
+  final String currency;
 
   @override
   Widget build(BuildContext context) {
@@ -21,15 +26,9 @@ class ServicePriceSummary extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const AppText.caption(
-                  'المبلغ التقريبي (شامل الضريبة 15%)',
-                  color: AppColors.bodyText,
-                ),
-
                 const SizedBox(height: 3),
-
                 AppText.title(
-                  '${totalPrice.toStringAsFixed(2)} ر.س',
+                  '${totalPrice.toStringAsFixed(2)} $currency ',
                   color: AppColors.headingText,
                 ),
               ],

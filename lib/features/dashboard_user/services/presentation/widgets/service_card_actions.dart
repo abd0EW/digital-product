@@ -39,6 +39,7 @@ class ServiceCardActions extends StatelessWidget {
                   color: AppColors.tealPrimary,
                 ),
 
+                AppText.caption("/"),
                 AppText.caption(serviceModel.pricingUnit),
               ],
             ),

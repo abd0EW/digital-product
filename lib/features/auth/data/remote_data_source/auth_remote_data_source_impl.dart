@@ -20,7 +20,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       () => _client.auth.signUp(
         email: email.trim(),
         password: password,
-        emailRedirectTo: 'http://localhost:57810/verify-email',
+        emailRedirectTo: 'http://localhost:50117/verify-email',
         data: {
           'full_name': fullName.trim(),
           'phone': phone.trim(),
@@ -50,7 +50,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     await _handleAuthRequest(
       () => _client.auth.resetPasswordForEmail(
         email.trim(),
-        redirectTo: "http://localhost:57810/reset-password",
+        redirectTo: "http://localhost:50117/reset-password",
       ),
     );
     print("===================");

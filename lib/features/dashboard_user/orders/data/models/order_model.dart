@@ -1,55 +1,105 @@
-import 'package:digital_product/core/constants/app_colors.dart';
-import 'package:flutter/material.dart';
-
-enum OrderStatus { inProgress, waitingPayment, completed, rejected }
-
-extension OrderStatusX on OrderStatus {
-  String get label => switch (this) {
-    OrderStatus.inProgress => 'قيد التنفيذ',
-    OrderStatus.waitingPayment => 'بانتظار الدفع',
-    OrderStatus.completed => 'مكتمل',
-    OrderStatus.rejected => 'مرفوض',
-  };
-
-  Color get color => switch (this) {
-    OrderStatus.inProgress => AppColors.warning,
-    OrderStatus.waitingPayment => AppColors.bodyText,
-    OrderStatus.completed => AppColors.success,
-    OrderStatus.rejected => AppColors.warning,
-  };
-
-  Color get backgroundColor => switch (this) {
-    OrderStatus.inProgress => AppColors.warningBackground,
-    OrderStatus.waitingPayment => const Color(0xFFF1F3F6),
-    OrderStatus.completed => AppColors.successBackground,
-    OrderStatus.rejected => const Color(0xFFFFEEEE),
-  };
-}
-
 class OrderModel {
+  final String? id;
+  final int? orderNumber;
+
+  final String? userId;
+  final String serviceId;
+  final String? workerId;
+
+  final int quantity;
+  final double unitPrice;
+  final double subtotal;
+
+  final double totalAmount;
+
+  final String paymentTiming;
+  final String paymentStatus;
+  final String status;
+
+  final String? notes;
+
+  final DateTime? assignedAt;
+  final DateTime? startedAt;
+  final DateTime? paymentRequestedAt;
+  final DateTime? completedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+
   const OrderModel({
-    required this.serviceName,
-    required this.description,
-    required this.orderNumber,
+    this.id,
+    this.orderNumber,
+    this.userId,
+    required this.serviceId,
+    this.workerId,
     required this.quantity,
-    required this.date,
-    required this.time,
+    required this.unitPrice,
+    required this.subtotal,
+
+    required this.totalAmount,
+    required this.paymentTiming,
+    required this.paymentStatus,
     required this.status,
-    required this.price,
     this.notes,
-    this.attachmentName,
-    this.attachmentSize,
+    this.assignedAt,
+    this.startedAt,
+    this.paymentRequestedAt,
+    this.completedAt,
+    this.createdAt,
+    this.updatedAt,
   });
 
-  final String serviceName;
-  final String description;
-  final String orderNumber;
-  final String quantity;
-  final String date;
-  final String time;
-  final OrderStatus status;
-  final String price;
-  final String? notes;
-  final String? attachmentName;
-  final String? attachmentSize;
+  factory OrderModel.fromJson(Map<String, dynamic> json) {
+    return OrderModel(
+      id: json['id'] as String?,
+      orderNumber: json['order_number'] != null
+          ? (json['order_number'] as num).toInt()
+          : null,
+      userId: json['user_id'] as String?,
+      serviceId: json['service_id'] as String,
+      workerId: json['worker_id'] as String?,
+      quantity: (json['quantity'] as num).toInt(),
+      unitPrice: (json['unit_price'] as num).toDouble(),
+      subtotal: (json['subtotal'] as num).toDouble(),
+
+      totalAmount: (json['total_amount'] as num).toDouble(),
+      paymentTiming: json['payment_timing'] as String,
+      paymentStatus: json['payment_status'] as String,
+      status: json['status'] as String,
+      notes: json['notes'] as String?,
+      assignedAt: json['assigned_at'] != null
+          ? DateTime.parse(json['assigned_at'])
+          : null,
+      startedAt: json['started_at'] != null
+          ? DateTime.parse(json['started_at'])
+          : null,
+      paymentRequestedAt: json['payment_requested_at'] != null
+          ? DateTime.parse(json['payment_requested_at'])
+          : null,
+      completedAt: json['completed_at'] != null
+          ? DateTime.parse(json['completed_at'])
+          : null,
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'])
+          : null,
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'])
+          : null,
+    );
+  }
+
+  Map<String, dynamic> toCreateJson() {
+    return {
+      'user_id': userId,
+      'service_id': serviceId,
+      'quantity': quantity,
+      'unit_price': unitPrice,
+      'subtotal': subtotal,
+
+      'total_amount': totalAmount,
+      'payment_timing': paymentTiming,
+      'payment_status': paymentStatus,
+      'status': status,
+      'notes': notes,
+    };
+  }
 }

@@ -7,15 +7,19 @@ class ServiceUploadFile extends StatelessWidget {
     super.key,
     required this.onTap,
     required this.isUploaded,
+    required this.isSelectedFile,
     this.fileName,
   });
 
   final VoidCallback onTap;
   final bool isUploaded;
   final String? fileName;
+  final bool isSelectedFile;
 
   @override
   Widget build(BuildContext context) {
+    final hasError = isSelectedFile && !isUploaded;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -36,7 +40,11 @@ class ServiceUploadFile extends StatelessWidget {
                   : AppColors.cardBackground,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: isUploaded ? AppColors.success : AppColors.inputBorder,
+                color: hasError
+                    ? Colors.red
+                    : isUploaded
+                    ? AppColors.success
+                    : AppColors.inputBorder,
               ),
             ),
             child: isUploaded
@@ -106,6 +114,18 @@ class ServiceUploadFile extends StatelessWidget {
                   ),
           ),
         ),
+
+        if (hasError) ...[
+          const SizedBox(height: 6),
+
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4),
+            child: AppText.caption(
+              'يجب اختيار ملف قبل المتابعة',
+              color: Colors.red,
+            ),
+          ),
+        ],
       ],
     );
   }

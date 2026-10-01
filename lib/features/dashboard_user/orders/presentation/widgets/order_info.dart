@@ -13,11 +13,7 @@ class OrderInfo extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AppText.title(
-          order.serviceName,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
+        AppText.title("الخدمه", maxLines: 1, overflow: TextOverflow.ellipsis),
         const SizedBox(height: 4),
         AppText.caption(
           '${order.orderNumber}  •  ${order.quantity}',
@@ -27,7 +23,7 @@ class OrderInfo extends StatelessWidget {
         ),
         const SizedBox(height: 2),
         AppText.caption(
-          '${order.date}  •  ${order.time}',
+          '${order.createdAt}  •  ${order.assignedAt}',
           color: AppColors.bodyText,
         ),
       ],

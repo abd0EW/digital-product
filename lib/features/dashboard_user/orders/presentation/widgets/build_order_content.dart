@@ -1,11 +1,11 @@
 import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/widgets/app_button.dart';
 import 'package:digital_product/features/dashboard_user/services/data/models/service_model.dart';
-import 'package:digital_product/features/dashboard_user/services/presentation/widgets/service_notes_field.dart';
-import 'package:digital_product/features/dashboard_user/services/presentation/widgets/service_order_header.dart';
-import 'package:digital_product/features/dashboard_user/services/presentation/widgets/service_pages_counter.dart';
-import 'package:digital_product/features/dashboard_user/services/presentation/widgets/service_price_summary.dart';
-import 'package:digital_product/features/dashboard_user/services/presentation/widgets/service_upload_file.dart';
+import 'package:digital_product/features/dashboard_user/orders/presentation/widgets/create_notes_field.dart';
+import 'package:digital_product/features/dashboard_user/orders/presentation/widgets/create_order_header.dart';
+import 'package:digital_product/features/dashboard_user/orders/presentation/widgets/service_pages_counter.dart';
+import 'package:digital_product/features/dashboard_user/orders/presentation/widgets/service_price_summary.dart';
+import 'package:digital_product/features/dashboard_user/orders/presentation/widgets/service_upload_file.dart';
 import 'package:flutter/material.dart';
 
 class BuildOrderContent extends StatelessWidget {
@@ -21,6 +21,8 @@ class BuildOrderContent extends StatelessWidget {
     required this.onDecrement,
     required this.onUploadFile,
     required this.onReview,
+    required this.isSubmitting,
+    required this.isSelectedFile,
   });
 
   final ServiceModel service;
@@ -31,6 +33,8 @@ class BuildOrderContent extends StatelessWidget {
 
   final String? fileName;
   final bool isUploaded;
+  final bool isSelectedFile;
+  final bool isSubmitting;
 
   final VoidCallback onIncrement;
   final VoidCallback onDecrement;
@@ -42,7 +46,7 @@ class BuildOrderContent extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        ServiceOrderHeader(service: service),
+        CreateOrderHeader(service: service),
 
         const SizedBox(height: 22),
 
@@ -61,23 +65,28 @@ class BuildOrderContent extends StatelessWidget {
         ServiceUploadFile(
           isUploaded: isUploaded,
           fileName: fileName,
+          isSelectedFile: isSelectedFile,
           onTap: onUploadFile,
         ),
 
         const SizedBox(height: 18),
 
-        ServicePriceSummary(totalPrice: totalPrice),
+        ServicePriceSummary(totalPrice: totalPrice, currency: service.currency),
 
         const SizedBox(height: 18),
 
         SizedBox(
           width: double.infinity,
-          child: AppButton(
-            title: 'مراجعة الطلب',
-            onPressed: onReview,
-            backgroundColor: AppColors.primaryButtonBackground,
-            foregroundColor: AppColors.primaryButtonText,
-          ),
+          child: isSubmitting
+              ? CircularProgressIndicator(
+                  backgroundColor: AppColors.primaryButtonBackground,
+                )
+              : AppButton(
+                  title: 'مراجعة الطلب',
+                  onPressed: onReview,
+                  backgroundColor: AppColors.primaryButtonBackground,
+                  foregroundColor: AppColors.primaryButtonText,
+                ),
         ),
       ],
     );

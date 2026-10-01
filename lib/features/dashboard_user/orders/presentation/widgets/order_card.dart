@@ -39,9 +39,9 @@ class OrderCard extends StatelessWidget {
                 textDirection: TextDirection.rtl,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  OrderStatusBadge(status: order.status),
+                  //    OrderStatusBadge(: order.status),
                   AppText.title(
-                    '${order.price} ر.س',
+                    '${order.unitPrice} ريال',
                     color: AppColors.secondaryButtonBackground,
                   ),
                 ],
