@@ -11,14 +11,14 @@ class OrderCard extends StatelessWidget {
   const OrderCard({required this.order, required this.onPressed, super.key});
 
   final OrderModel order;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 1,
+      elevation: 0.5,
       color: AppColors.cardBackground,
-      margin: EdgeInsets.only(bottom: 10),
+
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.small),
         side: const BorderSide(color: AppColors.cardBorder),
@@ -39,9 +39,9 @@ class OrderCard extends StatelessWidget {
                 textDirection: TextDirection.rtl,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  //    OrderStatusBadge(: order.status),
+                  OrderStatusBadge(status: order.status),
                   AppText.title(
-                    '${order.unitPrice} ريال',
+                    '${order.unitPrice} ${order.service?.currency ?? "ريال"}',
                     color: AppColors.secondaryButtonBackground,
                   ),
                 ],

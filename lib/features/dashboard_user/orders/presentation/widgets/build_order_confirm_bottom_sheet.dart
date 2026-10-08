@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/widgets/app_button.dart';
 import 'package:digital_product/core/widgets/app_text.dart';
+import 'package:digital_product/features/dashboard_user/orders/presentation/widgets/build_before_payment_order.dart';
 import 'package:digital_product/features/dashboard_user/orders/presentation/widgets/build_order_confirm_bottom_header.dart';
 import 'package:digital_product/features/dashboard_user/orders/presentation/widgets/build_order_confirm_payment_selector.dart';
 import 'package:digital_product/features/dashboard_user/services/data/models/service_model.dart';
@@ -21,13 +22,14 @@ class _BuildOrderConfirmBottomSheetState
     extends State<BuildOrderConfirmBottomSheet> {
   Timer? _closeTimer;
 
-  bool get isPaymentBefore => widget.serviceModel.paymentTiming == 'before';
+  bool get isPaymentAfter =>
+      widget.serviceModel.paymentTiming == 'الدفع بعد الإنجاز';
 
   @override
   void initState() {
     super.initState();
 
-    if (!isPaymentBefore) {
+    if (!isPaymentAfter) {
       _closeTimer = Timer(const Duration(seconds: 3), () {
         if (!mounted) return;
 
@@ -44,38 +46,14 @@ class _BuildOrderConfirmBottomSheetState
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 350),
-      switchInCurve: Curves.easeOutBack,
-      switchOutCurve: Curves.easeIn,
-      child: isPaymentBefore
-          ? _buildBeforePayment()
-          : _buildAfterPayment(context),
-    );
-  }
-
-  Widget _buildBeforePayment() {
-    return Column(
-      key: const ValueKey('before-payment'),
-      spacing: 30,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        BuildOrderConfirmBottomHeader(serviceModel: widget.serviceModel),
-
-        const BuildOrderConfirmPaymentSelector(),
-
-        AppButton(
-          width: double.infinity,
-          title:
-              'ادفع ${widget.serviceModel.price} ${widget.serviceModel.currency}',
-          onPressed: () {
-            // تنفيذ عملية الدفع
-          },
-          backgroundColor: AppColors.secondaryButtonBackground,
-          foregroundColor: AppColors.primaryButtonText,
-        ),
-      ],
-    );
+    return isPaymentAfter
+        ? AnimatedSwitcher(
+            duration: const Duration(milliseconds: 350),
+            switchInCurve: Curves.easeOutBack,
+            switchOutCurve: Curves.easeIn,
+            child: _buildAfterPayment(context),
+          )
+        : BuildBeforePaymentOrder(serviceModel: widget.serviceModel);
   }
 
   Widget _buildAfterPayment(BuildContext context) {

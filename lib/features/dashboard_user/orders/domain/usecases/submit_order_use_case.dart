@@ -13,12 +13,10 @@ class SubmitOrderUseCase {
   final SaveOrderFileUseCase _saveOrderFileUseCase;
 
   SubmitOrderUseCase({
-    required CreateOrderUseCase createOrderUseCase,
-    required UploadOrderFileUseCase uploadOrderFileUseCase,
-    required SaveOrderFileUseCase saveOrderFileUseCase,
-  }) : _createOrderUseCase = createOrderUseCase,
-       _uploadOrderFileUseCase = uploadOrderFileUseCase,
-       _saveOrderFileUseCase = saveOrderFileUseCase;
+    required this._createOrderUseCase,
+    required this._uploadOrderFileUseCase,
+    required this._saveOrderFileUseCase,
+  });
 
   Future<Either<OrderFailure, OrderModel>> call({
     required OrderModel order,

@@ -5,9 +5,9 @@ import 'package:digital_product/features/dashboard_user/orders/domain/failures/o
 
 import 'package:file_picker/file_picker.dart';
 
-import '../../data/models/order_model.dart';
+import '../../../data/models/order_model.dart';
 
-abstract class OrdersRepository {
+abstract class CreateOrdersRepository {
   Future<Either<OrderFailure, OrderModel>> createOrder({
     required OrderModel order,
   });

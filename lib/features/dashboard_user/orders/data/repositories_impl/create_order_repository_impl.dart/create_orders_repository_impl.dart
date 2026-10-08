@@ -1,16 +1,16 @@
 import 'package:dartz/dartz.dart';
 import 'package:digital_product/features/dashboard_user/orders/data/models/order_file_model.dart';
-import 'package:digital_product/features/dashboard_user/orders/data/remote_data_source/orders/order_remote_data_source.dart';
+import 'package:digital_product/features/dashboard_user/orders/data/remote_data_source/orders/get_order_remote_data_source.dart';
 import 'package:digital_product/features/dashboard_user/orders/data/remote_data_source/orders_files/order_files_remote_data_source_impl.dart';
 import 'package:digital_product/features/dashboard_user/orders/domain/failures/order_failure.dart';
 import 'package:file_picker/file_picker.dart';
-import '../../domain/repositories/orders_repository.dart';
-import '../models/order_model.dart';
+import '../../../domain/repositories/create_order_repository/create_orders_repository.dart';
+import '../../models/order_model.dart';
 
-class OrdersRepositoryImpl implements OrdersRepository {
-  final OrdersRemoteDataSource _remoteDataSource;
+class CreateOrdersRepositoryImpl implements CreateOrdersRepository {
+  final GetOrderRemoteDataSource _remoteDataSource;
   final OrderFilesRemoteDataSourceImpl _orderFilesRemoteDataSourceImpl;
-  OrdersRepositoryImpl({
+  CreateOrdersRepositoryImpl({
     required this._remoteDataSource,
     required this._orderFilesRemoteDataSourceImpl,
   });

@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/constants/app_radius.dart';
 import 'package:digital_product/core/constants/app_spacing.dart';
@@ -7,31 +5,18 @@ import 'package:digital_product/core/widgets/app_button.dart';
 import 'package:digital_product/core/widgets/app_text.dart';
 import 'package:digital_product/features/dashboard_user/profile/data/models/profile_model.dart';
 import 'package:digital_product/features/dashboard_user/profile/presentation/widgets/profile_avatar_picker.dart';
-import 'package:digital_product/features/dashboard_user/profile/presentation/widgets/profile_edit_form.dart';
 import 'package:digital_product/features/dashboard_user/profile/presentation/widgets/profile_info_row.dart';
 import 'package:flutter/material.dart';
 
 class ProfileUserCard extends StatelessWidget {
   const ProfileUserCard({
     required this.profileModel,
-    required this.phoneController,
-    required this.avatarBytes,
-    required this.onAvatarChanged,
     required this.onEditPressed,
-    required this.onSavePressed,
-    required this.onCancelPressed,
-    required this.nameController,
     super.key,
   });
 
   final ProfileModel profileModel;
-  final TextEditingController nameController;
-  final TextEditingController phoneController;
-  final Uint8List? avatarBytes;
-  final ValueChanged<Uint8List> onAvatarChanged;
   final VoidCallback onEditPressed;
-  final VoidCallback onSavePressed;
-  final VoidCallback onCancelPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -42,37 +27,9 @@ class ProfileUserCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppRadius.small),
         border: Border.all(color: AppColors.cardBorder),
       ),
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 250),
-        switchInCurve: Curves.easeOutCubic,
-        switchOutCurve: Curves.easeInCubic,
-        transitionBuilder: (child, animation) {
-          return FadeTransition(
-            opacity: animation,
-            child: SizeTransition(
-              sizeFactor: animation,
-              axis: Axis.vertical,
-              alignment: Alignment.topCenter,
-              child: child,
-            ),
-          );
-        },
-        child: profileModel.isEditing
-            ? ProfileEditForm(
-                key: const ValueKey('profile-edit'),
-                nameController: nameController,
-                phoneController: phoneController,
-                email: profileModel.email ?? 'Guest@gmail.com',
-                onSave: onSavePressed,
-                onCancel: onCancelPressed,
-              )
-            : _ProfileInfoSummary(
-                key: const ValueKey('profile-info'),
-                profileModel: profileModel,
-                avatarBytes: avatarBytes,
-                onAvatarChanged: onAvatarChanged,
-                onEditPressed: onEditPressed,
-              ),
+      child: _ProfileInfoSummary(
+        profileModel: profileModel,
+        onEditPressed: onEditPressed,
       ),
     );
   }
@@ -81,15 +38,10 @@ class ProfileUserCard extends StatelessWidget {
 class _ProfileInfoSummary extends StatelessWidget {
   const _ProfileInfoSummary({
     required this.profileModel,
-    required this.avatarBytes,
-    required this.onAvatarChanged,
     required this.onEditPressed,
-    super.key,
   });
 
   final ProfileModel profileModel;
-  final Uint8List? avatarBytes;
-  final ValueChanged<Uint8List> onAvatarChanged;
   final VoidCallback onEditPressed;
 
   @override
@@ -102,8 +54,9 @@ class _ProfileInfoSummary extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ProfileAvatarPicker(
-              avatarBytes: avatarBytes,
-              onAvatarChanged: onAvatarChanged,
+              avatarUrl: profileModel.imageUrl,
+              readOnly: true,
+              onTapWhenReadOnly: onEditPressed,
             ),
             const SizedBox(width: AppSpacing.md),
             Expanded(

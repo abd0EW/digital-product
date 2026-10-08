@@ -1,3 +1,5 @@
+import 'package:digital_product/features/dashboard_user/services/data/models/service_model.dart';
+
 class OrderModel {
   final String? id;
   final int? orderNumber;
@@ -25,6 +27,7 @@ class OrderModel {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
+  final ServiceModel? service;
   const OrderModel({
     this.id,
     this.orderNumber,
@@ -34,7 +37,7 @@ class OrderModel {
     required this.quantity,
     required this.unitPrice,
     required this.subtotal,
-
+    required this.service,
     required this.totalAmount,
     required this.paymentTiming,
     required this.paymentStatus,
@@ -50,6 +53,9 @@ class OrderModel {
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
     return OrderModel(
+      service: json["service"] != null
+          ? ServiceModel.fromJson(Map<String, dynamic>.from(json["service"]))
+          : null,
       id: json['id'] as String?,
       orderNumber: json['order_number'] != null
           ? (json['order_number'] as num).toInt()

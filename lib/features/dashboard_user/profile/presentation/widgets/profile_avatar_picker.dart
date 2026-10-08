@@ -2,18 +2,31 @@ import 'dart:typed_data';
 
 import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/constants/app_radius.dart';
+import 'package:digital_product/core/utils/app_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileAvatarPicker extends StatefulWidget {
   const ProfileAvatarPicker({
-    required this.avatarBytes,
-    required this.onAvatarChanged,
+    this.avatarBytes,
+    this.avatarUrl,
+    this.onAvatarChanged,
+    this.readOnly = false,
+    this.onTapWhenReadOnly,
+    this.enabled = true,
     super.key,
   });
 
   final Uint8List? avatarBytes;
-  final ValueChanged<Uint8List> onAvatarChanged;
+  final String? avatarUrl;
+  final void Function({
+    required Uint8List bytes,
+    required String extension,
+    required String contentType,
+  })? onAvatarChanged;
+  final bool readOnly;
+  final VoidCallback? onTapWhenReadOnly;
+  final bool enabled;
 
   @override
   State<ProfileAvatarPicker> createState() => _ProfileAvatarPickerState();
@@ -24,6 +37,11 @@ class _ProfileAvatarPickerState extends State<ProfileAvatarPicker> {
   bool _isPicking = false;
 
   Future<void> _pickAvatar() async {
+    if (!widget.enabled) return;
+    if (widget.readOnly) {
+      widget.onTapWhenReadOnly?.call();
+      return;
+    }
     if (_isPicking) return;
 
     setState(() => _isPicking = true);
@@ -36,12 +54,61 @@ class _ProfileAvatarPickerState extends State<ProfileAvatarPicker> {
       if (file == null || !mounted) return;
 
       final bytes = await file.readAsBytes();
-      if (mounted) widget.onAvatarChanged(bytes);
-    } catch (_) {
-      // Picker errors should not interrupt the profile screen.
+      final imageType = _resolveImageType(file);
+      if (mounted) {
+        widget.onAvatarChanged?.call(
+          bytes: bytes,
+          extension: imageType.extension,
+          contentType: imageType.contentType,
+        );
+      }
+    } on Exception catch (exception) {
+      if (mounted) {
+        AppSnackbar.error(context, message: 'تعذر اختيار الصورة: $exception');
+      }
     } finally {
       if (mounted) setState(() => _isPicking = false);
     }
+  }
+
+  ({String extension, String contentType}) _resolveImageType(XFile file) {
+    final suppliedMimeType = file.mimeType?.toLowerCase().split(';').first;
+    final suppliedExtension = file.name.contains('.')
+        ? file.name.split('.').last.toLowerCase()
+        : null;
+    final extensionMimeType = switch (suppliedExtension) {
+      'jpg' || 'jpeg' => 'image/jpeg',
+      'png' => 'image/png',
+      'webp' => 'image/webp',
+      _ => null,
+    };
+    final mimeExtension = switch (suppliedMimeType) {
+      'image/jpeg' => 'jpg',
+      'image/jpg' => 'jpg',
+      'image/png' => 'png',
+      'image/webp' => 'webp',
+      null || '' => null,
+      _ => throw const FormatException('نوع الصورة غير مدعوم'),
+    };
+
+    final contentType = suppliedMimeType == 'image/jpg'
+        ? 'image/jpeg'
+        : suppliedMimeType?.isNotEmpty == true
+        ? suppliedMimeType!
+        : extensionMimeType;
+    final extension = extensionMimeType == null
+        ? mimeExtension
+        : suppliedExtension;
+
+    if (contentType == null ||
+        extension == null ||
+        (extensionMimeType != null &&
+            suppliedMimeType != null &&
+            extensionMimeType != suppliedMimeType)) {
+      throw const FormatException('يُسمح فقط بصور JPG أو PNG أو WEBP');
+    }
+
+    return (extension: extension, contentType: contentType);
   }
 
   @override
@@ -50,23 +117,23 @@ class _ProfileAvatarPickerState extends State<ProfileAvatarPicker> {
       button: true,
       label: 'تغيير الصورة الشخصية',
       child: GestureDetector(
-        onTap: _pickAvatar,
+        onTap: !widget.enabled ||
+                (widget.readOnly && widget.onTapWhenReadOnly == null)
+            ? null
+            : _pickAvatar,
         child: Stack(
           clipBehavior: Clip.none,
           children: [
             CircleAvatar(
               radius: 42,
               backgroundColor: AppColors.navyPrimary,
-              backgroundImage: widget.avatarBytes == null
-                  ? null
-                  : MemoryImage(widget.avatarBytes!),
-              child: widget.avatarBytes == null
-                  ? const Icon(
-                      Icons.person_rounded,
-                      color: AppColors.appBackground,
-                      size: 44,
-                    )
-                  : null,
+              child: ClipOval(
+                child: SizedBox(
+                  width: 84,
+                  height: 84,
+                  child: _buildAvatarImage(),
+                ),
+              ),
             ),
             Positioned(
               bottom: -2,
@@ -74,7 +141,7 @@ class _ProfileAvatarPickerState extends State<ProfileAvatarPicker> {
               width: 30,
               height: 30,
               child: Container(
-                padding: EdgeInsets.all(5),
+                padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
                   color: AppColors.headingText,
                   borderRadius: BorderRadius.circular(AppRadius.small),
@@ -94,6 +161,42 @@ class _ProfileAvatarPickerState extends State<ProfileAvatarPicker> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAvatarImage() {
+    final bytes = widget.avatarBytes;
+    if (bytes != null) {
+      return Image.memory(
+        bytes,
+        fit: BoxFit.cover,
+        errorBuilder: (_, _, _) => _defaultAvatar(),
+      );
+    }
+
+    final imageUrl = widget.avatarUrl;
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      return Image.network(
+        imageUrl,
+        key: ValueKey(imageUrl),
+        fit: BoxFit.cover,
+        errorBuilder: (_, _, _) => _defaultAvatar(),
+      );
+    }
+
+    return _defaultAvatar();
+  }
+
+  Widget _defaultAvatar() {
+    return const ColoredBox(
+      color: AppColors.navyPrimary,
+      child: Center(
+        child: Icon(
+          Icons.person_rounded,
+          color: AppColors.appBackground,
+          size: 44,
         ),
       ),
     );

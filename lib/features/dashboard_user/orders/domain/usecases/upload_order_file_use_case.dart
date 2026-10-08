@@ -2,11 +2,11 @@
 
 import 'package:dartz/dartz.dart';
 import 'package:digital_product/features/dashboard_user/orders/domain/failures/order_failure.dart';
-import 'package:digital_product/features/dashboard_user/orders/domain/repositories/orders_repository.dart';
+import 'package:digital_product/features/dashboard_user/orders/domain/repositories/create_order_repository/create_orders_repository.dart';
 import 'package:file_picker/file_picker.dart';
 
 class UploadOrderFileUseCase {
-  final OrdersRepository _ordersRepository;
+  final CreateOrdersRepository _ordersRepository;
 
   UploadOrderFileUseCase(this._ordersRepository);
 

@@ -15,6 +15,7 @@ class ServicesRemoteDataSourceImpl implements ServicesRemoteDataSource {
   @override
   Future<List<ServiceModel>> getServices() async {
     try {
+      print("getServices");
       final response = await _client
           .from('services')
           .select()

@@ -24,7 +24,7 @@ class _BuildOrderConfirmPaymentSelectorState
 
       children: [
         PaymentSelector(
-          paymentMethodModel: PaymentMethodModel(
+          paymentMethodModel: const PaymentMethodModel(
             title: "Card",
             icon: Icons.credit_card,
             type: PaymentMethodType.card,
@@ -39,7 +39,7 @@ class _BuildOrderConfirmPaymentSelectorState
         ),
 
         PaymentSelector(
-          paymentMethodModel: PaymentMethodModel(
+          paymentMethodModel: const PaymentMethodModel(
             title: 'Apple Pay',
             icon: Icons.apple,
             type: PaymentMethodType.applePay,

@@ -2,7 +2,7 @@ import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/constants/app_spacing.dart';
 import 'package:digital_product/core/widgets/app_text.dart';
 import 'package:digital_product/features/dashboard_user/orders/data/models/order_model.dart';
-import 'package:digital_product/features/dashboard_user/orders/presentation/widgets/order_summary_card.dart';
+import 'package:digital_product/features/dashboard_user/orders/presentation/widgets/order_details_card.dart';
 import 'package:flutter/material.dart';
 
 class OrderAttachmentsCard extends StatelessWidget {
@@ -26,7 +26,7 @@ class OrderAttachmentsCard extends StatelessWidget {
                 color: AppColors.warning,
               ),
               const SizedBox(width: AppSpacing.sm),
-              Expanded(
+              const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -12,10 +12,11 @@ class AppOrderFilterChips extends StatelessWidget {
   });
 
   static const List<String> defaultFilters = [
-    'قيد التنفيذ',
-    'بانتظار الدفع',
-    'مكتمل',
-    'مرفوض',
+    "all"
+        'pending',
+    'in_progress',
+    'completed',
+    'rejected',
   ];
 
   final String selectedFilter;

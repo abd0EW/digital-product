@@ -1,3 +1,4 @@
+import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class appLoadingState extends StatelessWidget {
@@ -5,8 +6,12 @@ class appLoadingState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SliverToBoxAdapter(
-      child: Center(child: CircularProgressIndicator()),
+    return const SliverFillRemaining(
+      child: Center(
+        child: CircularProgressIndicator(
+          color: AppColors.primaryButtonBackground,
+        ),
+      ),
     );
   }
 }
