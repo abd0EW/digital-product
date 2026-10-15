@@ -10,12 +10,14 @@ class AppBottomSheetBtn extends StatelessWidget {
     this.color,
     this.onPressed,
     this.disabled = false,
+    this.isLoading = false,
   });
 
   final String title;
   final Color? color;
   final VoidCallback? onPressed;
   final bool disabled;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +52,7 @@ class AppBottomSheetBtn extends StatelessWidget {
           onPressed: disabled ? null : (onPressed ?? () {}),
           backgroundColor: color ?? AppColors.secondaryButtonBackground,
           foregroundColor: Colors.white,
+          isLoading: isLoading,
         ),
       ),
     );

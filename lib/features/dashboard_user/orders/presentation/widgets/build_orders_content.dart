@@ -1,5 +1,5 @@
 import 'package:digital_product/core/constants/app_spacing.dart';
-import 'package:digital_product/core/widgets/app_state_loading.dart';
+import 'package:digital_product/core/widgets/app_state_loading_silver.dart';
 import 'package:digital_product/features/dashboard_user/orders/presentation/viewmodels/get_order/get_order_cubit.dart';
 import 'package:digital_product/features/dashboard_user/orders/presentation/viewmodels/get_order/get_order_state.dart';
 import 'package:digital_product/features/dashboard_user/orders/data/models/order_model.dart';
@@ -17,7 +17,7 @@ class BuildOrdersContent extends StatelessWidget {
     return BlocBuilder<GetOrderCubit, GetOrderState>(
       builder: (context, state) {
         if (state is GetOrderInitial || state is GetOrderLoading) {
-          return const appLoadingState();
+          return const AppStateLoadingSilver();
         }
 
         if (state is GetOrderFailure) {

@@ -1,7 +1,7 @@
 import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/constants/app_radius.dart';
 import 'package:digital_product/core/constants/app_spacing.dart';
-import 'package:digital_product/features/dashboard_user/orders/presentation/utils/order_display_formatter.dart';
+import 'package:digital_product/core/utils/order_display_formatter.dart';
 import 'package:digital_product/core/widgets/app_text.dart';
 import 'package:flutter/material.dart';
 

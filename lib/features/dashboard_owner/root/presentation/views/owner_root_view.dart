@@ -1,6 +1,6 @@
 import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/constants/app_text_styles.dart';
-import 'package:digital_product/features/dashboard_owner/orders/presentation/views/owner_orders_view.dart';
+
 import 'package:digital_product/features/dashboard_owner/payments/presentation/views/owner_payments_view.dart';
 import 'package:digital_product/features/dashboard_owner/root/presentation/widgets/owner_drawer.dart';
 import 'package:digital_product/features/dashboard_owner/root/presentation/owner_section.dart';
@@ -41,7 +41,7 @@ class _OwnerRootViewState extends State<OwnerRootView> {
       body: IndexedStack(
         index: selectedSection.index,
         children: const [
-          OwnerOrdersView(),
+          //  OwnerOrdersView(),
           OwnerServicesView(),
           OwnerTeamView(),
           OwnerPaymentsView(),

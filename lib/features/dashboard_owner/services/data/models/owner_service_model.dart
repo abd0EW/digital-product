@@ -1,17 +1,15 @@
-class OwnerServiceModel {
-  final String name;
-  final String price;
-  final String unit;
-  final String paymentInfo;
-  final bool isEnabled;
-  final String category;
+import 'package:digital_product/features/dashboard_user/services/data/models/service_model.dart';
 
-  const OwnerServiceModel({
-    required this.name,
-    required this.price,
-    required this.unit,
-    required this.paymentInfo,
-    required this.isEnabled,
-    required this.category,
-  });
+class OwnerServiceModel {
+  final List<ServiceModel> servicesModel;
+
+  const OwnerServiceModel({required this.servicesModel});
+
+  factory OwnerServiceModel.fromJson(Map<String, dynamic> json) {
+    return OwnerServiceModel(
+      servicesModel: (json['services'])
+          .map((element) => ServiceModel.fromJson(element))
+          .toList(),
+    );
+  }
 }

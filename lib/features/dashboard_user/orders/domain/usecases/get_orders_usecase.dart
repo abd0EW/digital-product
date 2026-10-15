@@ -18,4 +18,10 @@ class GetOrdersUsecase {
   }) {
     return _getordersRepository.getOrderFiles(orderId: orderId);
   }
+
+  Future<Either<OrderFailure, OrderModel?>> getOrderById({
+    required String orderId,
+  }) {
+    return _getordersRepository.getUserOrderById(orderId: orderId);
+  }
 }

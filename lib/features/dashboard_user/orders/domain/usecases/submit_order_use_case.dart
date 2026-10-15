@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:digital_product/core/utils/mime_type/mime_type_resolver.dart';
 import 'package:digital_product/features/dashboard_user/orders/data/models/order_file_model.dart';
 import 'package:digital_product/features/dashboard_user/orders/data/models/order_model.dart';
 import 'package:digital_product/features/dashboard_user/orders/domain/failures/order_failure.dart';
@@ -11,11 +12,13 @@ class SubmitOrderUseCase {
   final CreateOrderUseCase _createOrderUseCase;
   final UploadOrderFileUseCase _uploadOrderFileUseCase;
   final SaveOrderFileUseCase _saveOrderFileUseCase;
+  final MimeTypeResolver _mimeTypeResolver;
 
   SubmitOrderUseCase({
     required this._createOrderUseCase,
     required this._uploadOrderFileUseCase,
     required this._saveOrderFileUseCase,
+    required this._mimeTypeResolver,
   });
 
   Future<Either<OrderFailure, OrderModel>> call({
@@ -58,7 +61,7 @@ class SubmitOrderUseCase {
               fileType: 'input',
               fileName: file.name,
               storagePath: storagePath,
-              mimeType: _getMimeType(file.extension),
+              mimeType: _mimeTypeResolver.getMimeType(file.extension),
               bucketName: 'user-files',
             );
 
@@ -76,28 +79,5 @@ class SubmitOrderUseCase {
         );
       },
     );
-  }
-
-  String _getMimeType(String? extension) {
-    switch (extension?.toLowerCase()) {
-      case 'pdf':
-        return 'application/pdf';
-
-      case 'jpg':
-      case 'jpeg':
-        return 'image/jpeg';
-
-      case 'png':
-        return 'image/png';
-
-      case 'doc':
-        return 'application/msword';
-
-      case 'docx':
-        return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-
-      default:
-        return 'application/octet-stream';
-    }
   }
 }

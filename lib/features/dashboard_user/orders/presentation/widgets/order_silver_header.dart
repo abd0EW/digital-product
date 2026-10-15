@@ -6,8 +6,8 @@ class OrderSilverHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.only(bottom: 10.0, top: 0, left: 10, right: 10),
+    return const SliverPadding(
+      padding: EdgeInsets.only(bottom: 10.0, top: 0, left: 10, right: 10),
       sliver: SliverToBoxAdapter(child: AppHeaderView(textHedader: 'طلباتي')),
     );
   }

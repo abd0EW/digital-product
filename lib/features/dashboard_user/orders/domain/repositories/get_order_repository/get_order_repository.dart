@@ -5,7 +5,14 @@ import 'package:digital_product/features/dashboard_user/orders/domain/failures/o
 
 abstract class GetOrderRepository {
   Future<Either<OrderFailure, List<OrderModel>>> getUserOrders();
+  Future<Either<OrderFailure, OrderModel?>> getUserOrderById({
+    required String orderId,
+  });
   Future<Either<OrderFailure, List<OrderFileModel>>> getOrderFiles({
     required String orderId,
+  });
+
+  Future<Either<OrderFailure, String>> getOrderFileUrl({
+    required String storagePath,
   });
 }

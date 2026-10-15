@@ -22,6 +22,12 @@ final class GetOrderFilesEmpty extends GetOrderFilesState {
   const GetOrderFilesEmpty();
 }
 
+final class GetOrderFileUrlSuccess extends GetOrderFilesState {
+  final String url;
+
+  const GetOrderFileUrlSuccess(this.url);
+}
+
 final class GetOrderFilesFailure extends GetOrderFilesState {
   final String message;
 

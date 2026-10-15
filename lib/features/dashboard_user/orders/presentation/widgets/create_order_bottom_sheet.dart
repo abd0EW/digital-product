@@ -125,7 +125,7 @@ class _CreateOrderBottomSheetState extends State<CreateOrderBottomSheet> {
                           totalAmount: totalAmount,
                           paymentTiming: widget.service.paymentTiming,
                           paymentStatus: 'pending',
-                          status: 'pending',
+                          status: 'in_progress',
                           notes: notes.isEmpty ? null : notes,
                         );
                         submitCubit.createOrder(

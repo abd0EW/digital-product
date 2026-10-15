@@ -1,4 +1,5 @@
-import 'package:digital_product/core/widgets/app_text_field.dart';
+import 'package:digital_product/core/utils/app_payment_option.dart';
+import 'package:digital_product/core/utils/app_payment_options.dart';
 import 'package:digital_product/features/dashboard_user/services/data/models/payment_model.dart';
 import 'package:digital_product/features/dashboard_user/services/presentation/widgets/payment_selector.dart';
 import 'package:flutter/material.dart';
@@ -15,66 +16,32 @@ class _BuildOrderConfirmPaymentSelectorState
     extends State<BuildOrderConfirmPaymentSelector> {
   PaymentMethodType selectedMethod = PaymentMethodType.card;
 
+  final paymetOPtion = appPaymentoptions;
+
+  AppPaymentConfig get selectedOption => paymetOPtion.firstWhere(
+    (element) => selectedMethod == element.paymentMethodModel.type,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Column(
       spacing: 10,
-
       mainAxisAlignment: MainAxisAlignment.center,
-
       children: [
-        PaymentSelector(
-          paymentMethodModel: const PaymentMethodModel(
-            title: "Card",
-            icon: Icons.credit_card,
-            type: PaymentMethodType.card,
+        for (final option in paymetOPtion)
+          PaymentSelector(
+            paymentMethodModel: option.paymentMethodModel,
+            isSelected: selectedMethod == option.paymentMethodModel.type,
+            onTap: () {
+              if (selectedMethod == option.paymentMethodModel.type) return;
+
+              setState(() {
+                selectedMethod = option.paymentMethodModel.type;
+              });
+            },
           ),
 
-          isSelected: selectedMethod == PaymentMethodType.card,
-          onTap: () {
-            setState(() {
-              selectedMethod = PaymentMethodType.card;
-            });
-          },
-        ),
-
-        PaymentSelector(
-          paymentMethodModel: const PaymentMethodModel(
-            title: 'Apple Pay',
-            icon: Icons.apple,
-            type: PaymentMethodType.applePay,
-          ),
-          isSelected: selectedMethod == PaymentMethodType.applePay,
-          onTap: () {
-            setState(() {
-              selectedMethod = PaymentMethodType.applePay;
-            });
-          },
-        ),
-        if (selectedMethod == PaymentMethodType.card) ...[
-          AppTextField(
-            controller: TextEditingController(),
-
-            hintText: "Card Number",
-          ),
-          Row(
-            spacing: 10,
-            children: [
-              Expanded(
-                child: AppTextField(
-                  controller: TextEditingController(),
-                  hintText: "MM/YY",
-                ),
-              ),
-              Expanded(
-                child: AppTextField(
-                  controller: TextEditingController(),
-                  hintText: "CVV",
-                ),
-              ),
-            ],
-          ),
-        ],
+        selectedOption.widgetBuilder(context),
       ],
     );
   }

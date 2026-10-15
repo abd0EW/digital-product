@@ -72,15 +72,9 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<AppFail, Unit>> updatePassword({
     required String newPassword,
   }) async {
-    // await _authRemoteDataSource.updatePassword(newPassword);
-    //  return Right(isVerified);
-    // } on AppFail catch (exception) {
-    //   return Left(exception);
-    // }
-
     try {
       await _authRemoteDataSource.updatePassword(newPassword);
-      return Right(unit);
+      return const Right(unit);
     } on AppFail catch (exception) {
       return Left(exception);
     }
@@ -93,6 +87,17 @@ class AuthRepositoryImpl implements AuthRepository {
       await action();
 
       return const Right(unit);
+    } on AppFail catch (exception) {
+      return Left(exception);
+    }
+  }
+
+  @override
+  Future<Either<AppFail, UserRole>> getUserRole() async {
+    try {
+      final UserRole role = await _authRemoteDataSource.getUserRole();
+
+      return Right(role);
     } on AppFail catch (exception) {
       return Left(exception);
     }

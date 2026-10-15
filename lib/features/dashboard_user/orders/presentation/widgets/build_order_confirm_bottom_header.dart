@@ -10,7 +10,7 @@ class BuildOrderConfirmBottomHeader extends StatelessWidget {
   final ServiceModel serviceModel;
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return const Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
@@ -23,8 +23,8 @@ class BuildOrderConfirmBottomHeader extends StatelessWidget {
               Row(
                 children: [
                   //  AppText.title(serviceModel.price),
-                  const Gap(4),
-                  const AppText.caption("ر.س"),
+                  Gap(4),
+                  AppText.caption("ر.س"),
                 ],
               ),
               //    AppText.caption(serviceModel.description),

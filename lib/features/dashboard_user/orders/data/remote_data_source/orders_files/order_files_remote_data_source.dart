@@ -8,5 +8,7 @@ abstract class OrderFilesRemoteDataSource {
     required String orderId,
   });
 
+  Future<String> getOrderFileUrl({required String storagePath});
+
   Future<OrderFileModel> saveOrderFile({required OrderFileModel file});
 }

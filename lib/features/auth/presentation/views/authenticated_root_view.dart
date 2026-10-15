@@ -1,7 +1,7 @@
 import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/utils/app_snackbar.dart';
 import 'package:digital_product/core/widgets/app_button.dart';
-import 'package:digital_product/features/auth/domain/entities/profile_entity.dart';
+import 'package:digital_product/features/auth/data/models/profile_model.dart';
 import 'package:digital_product/features/auth/domain/enums/user_role.dart';
 import 'package:digital_product/features/auth/presentation/viewmodels/auth_cubit.dart';
 import 'package:digital_product/features/auth/presentation/viewmodels/auth_state.dart';
@@ -19,7 +19,7 @@ class AuthenticatedRootView extends StatelessWidget {
     required this.newPasswordController,
   });
 
-  final ProfileEntity profile;
+  final ProfileModel profile;
   final TextEditingController passwordController;
   final TextEditingController newPasswordController;
 

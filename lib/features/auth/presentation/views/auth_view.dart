@@ -1,9 +1,10 @@
 import 'package:digital_product/core/utils/app_snackbar.dart';
+import 'package:digital_product/core/utils/role_navigation_resolver.dart';
 import 'package:digital_product/features/auth/presentation/viewmodels/auth_cubit.dart';
 import 'package:digital_product/features/auth/presentation/viewmodels/auth_state.dart';
 import 'package:digital_product/features/auth/presentation/views/login_view.dart';
 import 'package:digital_product/features/auth/presentation/views/register_view.dart';
-import 'package:digital_product/root.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -63,10 +64,7 @@ class _AuthViewState extends State<AuthView> {
         }
 
         if (state is AuthLoginSuccess) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => UserRootView()),
-          );
+          RoleNavigationResolver.resolve(context, state.role);
         }
       },
       child: IndexedStack(

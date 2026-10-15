@@ -1,13 +1,19 @@
 import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/di/service_locator.dart';
+import 'package:digital_product/core/utils/file_url_resolver/file_url_resolver_impl.dart';
+import 'package:digital_product/core/utils/mime_type/mime_type_resolver_impl.dart';
+import 'package:digital_product/core/utils/show_before_payment_bottom_sheet.dart';
 import 'package:digital_product/core/widgets/app_bottom_sheet_container.dart';
 import 'package:digital_product/core/widgets/app_show_model_bottom_sheet.dart';
 import 'package:digital_product/features/dashboard_user/orders/data/models/order_model.dart';
-import 'package:digital_product/features/dashboard_user/orders/data/remote_data_source/orders/get_order_remote_data_source_impl.dart';
+import 'package:digital_product/features/dashboard_user/orders/data/remote_data_source/get_orders/get_order_remote_data_source_impl.dart';
+import 'package:digital_product/features/dashboard_user/orders/data/remote_data_source/orders_files/order_files_remote_data_source_impl.dart';
 import 'package:digital_product/features/dashboard_user/orders/data/repositories_impl/get_order_repository_impl/get_order_repository_impl.dart';
 import 'package:digital_product/features/dashboard_user/orders/domain/usecases/get_orders_usecase.dart';
 import 'package:digital_product/features/dashboard_user/orders/presentation/viewmodels/create_order/submit_order_cubit.dart';
 import 'package:digital_product/features/dashboard_user/orders/presentation/viewmodels/get_order/get_order_cubit.dart';
+import 'package:digital_product/features/dashboard_user/orders/presentation/viewmodels/get_order_files/get_order_files_cubit.dart';
+import 'package:digital_product/features/dashboard_user/orders/presentation/viewmodels/get_order_files/get_order_files_state.dart';
 import 'package:digital_product/features/dashboard_user/orders/presentation/views/order_details_view.dart';
 import 'package:digital_product/features/dashboard_user/orders/presentation/widgets/build_before_payment_order.dart';
 import 'package:digital_product/features/dashboard_user/orders/presentation/widgets/order_body_silver.dart';
@@ -24,49 +30,16 @@ class OrdersView extends StatelessWidget {
     String nameOrder,
   ) async {
     if (order.status.trim().toLowerCase() == 'rejected') return;
-    Navigator.of(context).push(
+    FocusManager.instance.primaryFocus?.unfocus();
+    await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => OrderDetailsView(
           order: order,
 
-          onReorder: () async {
-            final cubit = ServiceLocator.sl<SubmitOrderCubit>();
-
-            final subscription = cubit.stream.listen((state) {
-              debugPrint('CREATE ORDER STATE => $state');
-            });
-
-            await cubit.createOrder(
-              order: OrderModel(
-                serviceId: order.service!.id,
-                quantity: order.quantity,
-                unitPrice: order.unitPrice,
-                subtotal: order.subtotal,
-                service: order.service,
-                totalAmount: order.totalAmount,
-                paymentTiming: order.paymentTiming,
-                paymentStatus: 'pending',
-                status: 'pending',
-              ),
-              file: null,
-            );
-
-            await subscription.cancel();
-            await cubit.close();
-          },
-
           onPayNow: () {
-            AppShowModelBottomSheet.appShowModalBottomSheet(
-              context,
-              Builder(
-                builder: (context) {
-                  return AppBottomSheetContainer(
-                    child: BuildBeforePaymentOrder(
-                      serviceModel: order.service!,
-                    ),
-                  );
-                },
-              ),
+            ShowBeforePaymentBottomSheet.show(
+              context: context,
+              serviceModel: order.service!,
             );
           },
         ),
@@ -80,6 +53,10 @@ class OrdersView extends StatelessWidget {
       create: (_) => GetOrderCubit(
         getOrdersUsecase: GetOrdersUsecase(
           GetOrderRepositoryImpl(
+            orderFilesRemoteDataSource: OrderFilesRemoteDataSourceImpl(
+              fileUrlResolver: FileUrlResolverImpl(),
+              mimeTypeResolver: MimeTypeResolverImpl(),
+            ),
             remoteDataSource: GetOrderRemoteDataSourceImpl(),
           ),
         ),

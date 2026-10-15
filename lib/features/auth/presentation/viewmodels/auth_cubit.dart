@@ -2,7 +2,7 @@ import 'package:digital_product/features/auth/data/repositories/auth_repository_
 import 'package:digital_product/features/auth/domain/enums/user_role.dart';
 import 'package:digital_product/features/auth/domain/failures/auth_error_message_handler.dart';
 import 'package:digital_product/features/auth/domain/repositories/auth_repository.dart';
-import 'package:digital_product/features/auth/presentation/navigation/auth_navigation_listener.dart';
+
 import 'package:digital_product/features/auth/presentation/viewmodels/auth_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,18 +12,39 @@ class AuthCubit extends Cubit<AuthState> {
     : super(const AuthInitial());
 
   final AuthRepository repository;
-
   Future<void> login({required String email, required String password}) async {
     emit(const AuthLoading());
 
-    final result = await repository.login(email: email, password: password);
+    try {
+      final result = await repository.login(email: email, password: password);
+      print("===========================");
+      print(result);
+      if (isClosed) return;
 
-    if (isClosed) return;
-
-    result.fold((exception) {
-      _emitFailure(exception);
-      return;
-    }, (_) => emit(const AuthLoginSuccess()));
+      await result.fold(
+        (failure) async {
+          _emitFailure(failure);
+          return;
+        },
+        (Success) async {
+          final role = await repository.getUserRole();
+          print("===========================");
+          print(role);
+          await role.fold(
+            (failure) {
+              _emitFailure(failure);
+            },
+            (role) {
+              emit(AuthLoginSuccess(role: role));
+            },
+          );
+          if (isClosed) return;
+        },
+      );
+    } catch (e) {
+      if (isClosed) return;
+      _emitFailure(e);
+    }
   }
 
   Future<void> register({
@@ -47,7 +68,8 @@ class AuthCubit extends Cubit<AuthState> {
 
     result.fold(
       (exception) => _emitFailure(exception),
-      (_) => emit(AuthRegistrationSuccess(email: email)),
+      (_) =>
+          emit(AuthRegistrationSuccess(email: email, acountType: role.value)),
     );
   }
 
@@ -69,7 +91,6 @@ class AuthCubit extends Cubit<AuthState> {
     required VoidCallback onRecovery,
   }) async {
     emit(const AuthLoading());
-    AuthNavigationListener().listenPasswordRecovery(onRecovery: onRecovery);
 
     final result = await repository.forgotPassword(email: email);
 

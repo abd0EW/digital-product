@@ -16,6 +16,8 @@ abstract interface class AuthRepository {
     required UserRole role,
   });
 
+  Future<Either<AppFail, UserRole>> getUserRole();
+
   Future<Either<AppFail, Unit>> logout();
 
   Future<Either<AppFail, Unit>> forgotPassword({required String email});
