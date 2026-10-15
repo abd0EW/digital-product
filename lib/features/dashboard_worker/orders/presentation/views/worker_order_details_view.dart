@@ -1,9 +1,10 @@
+import 'package:digital_product/features/dashboard_user/orders/presentation/widgets/order_details_card.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/constants/app_spacing.dart';
 import 'package:digital_product/core/widgets/app_bottom_sheet_btn.dart';
 import 'package:digital_product/core/widgets/app_text.dart';
-import 'package:digital_product/features/dashboard_user/orders/presentation/widgets/order_summary_card.dart';
+
 import 'package:digital_product/features/dashboard_worker/orders/data/models/worker_order_model.dart';
 import 'package:digital_product/features/dashboard_worker/orders/presentation/widgets/worker_order_status_badge.dart';
 import 'package:flutter/material.dart';
@@ -78,11 +79,11 @@ class _WorkerOrderDetailsViewState extends State<WorkerOrderDetailsView> {
           parent: AlwaysScrollableScrollPhysics(),
         ),
         slivers: [
-          SliverAppBar(
+          const SliverAppBar(
             pinned: true,
             centerTitle: true,
             toolbarHeight: 50,
-            title: const AppText.title('تفاصيل الطلب'),
+            title: AppText.title('تفاصيل الطلب'),
             backgroundColor: AppColors.appBackground,
             surfaceTintColor: AppColors.appBackground,
           ),

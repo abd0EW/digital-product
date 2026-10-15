@@ -1,27 +1,15 @@
 import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/constants/app_radius.dart';
 import 'package:digital_product/core/constants/app_spacing.dart';
-import 'package:digital_product/core/widgets/app_service_icon.dart';
-import 'package:digital_product/core/widgets/app_text.dart';
-import 'package:digital_product/features/dashboard_owner/services/data/models/owner_service_model.dart';
+import 'package:digital_product/features/dashboard_owner/services/presentation/widgets/owner_serices_card_switch.dart';
+import 'package:digital_product/features/dashboard_owner/services/presentation/widgets/owner_services_card_data.dart';
+import 'package:digital_product/features/dashboard_user/services/data/models/service_model.dart';
 import 'package:flutter/material.dart';
 
-class OwnerServiceCard extends StatefulWidget {
-  const OwnerServiceCard({
-    required this.service,
-    required this.onEdit,
-    super.key,
-  });
+class OwnerServiceCard extends StatelessWidget {
+  const OwnerServiceCard({required this.service, super.key});
 
-  final OwnerServiceModel service;
-  final VoidCallback onEdit;
-
-  @override
-  State<OwnerServiceCard> createState() => _OwnerServiceCardState();
-}
-
-class _OwnerServiceCardState extends State<OwnerServiceCard> {
-  late bool isEnabled = widget.service.isEnabled;
+  final ServiceModel service;
 
   @override
   Widget build(BuildContext context) {
@@ -35,53 +23,17 @@ class _OwnerServiceCardState extends State<OwnerServiceCard> {
         borderRadius: BorderRadius.circular(AppRadius.medium),
         border: Border.all(color: AppColors.cardBorder),
       ),
-      child: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    AppText.title(widget.service.name, maxLines: 1),
-                    const SizedBox(height: AppSpacing.xs),
-                    AppText.caption(
-                      '${widget.service.price} ر.س / ${widget.service.unit}',
-                      color: AppColors.tealPrimary,
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-                    AppText.caption(
-                      widget.service.paymentInfo,
-                      color: AppColors.bodyText,
-                    ),
-                  ],
-                ),
-              ),
-            ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          OwnerServicesCardData(service: service),
 
-            const SizedBox(width: AppSpacing.sm),
-            AppServiceIcon(serviceName: widget.service.name),
-
-            Column(
-              children: [
-                Switch(
-                  value: isEnabled,
-                  onChanged: (value) {
-                    setState(() {
-                      isEnabled = value;
-                    });
-                  },
-                  activeTrackColor: AppColors.success,
-                  inactiveThumbColor: AppColors.cardBackground,
-                  inactiveTrackColor: AppColors.cardBorder,
-                ),
-              ],
-            ),
-          ],
-        ),
+          OwnerSericesCardSwitch(
+            isEnabled: service.isActive,
+            id: service.id,
+          ),
+        ],
       ),
     );
   }

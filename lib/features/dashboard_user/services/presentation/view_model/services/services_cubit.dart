@@ -1,19 +1,20 @@
 import 'package:digital_product/features/dashboard_user/services/data/models/service_model.dart';
-import 'package:digital_product/features/dashboard_user/services/domain/repositories/services_repository.dart';
+import 'package:digital_product/features/dashboard_user/services/domain/usecases/get_serices_use_case.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'services_state.dart';
 
 class ServicesCubit extends Cubit<ServicesState> {
-  final ServicesRepository _servicesRepository;
+  final GetServicesUseCase _getSericesUseCase;
 
-  ServicesCubit(this._servicesRepository) : super(const ServicesInitial());
+  ServicesCubit(this._getSericesUseCase) : super(const ServicesInitial());
 
   List<ServiceModel> _allServices = [];
 
   Future<void> getServices() async {
     emit(const ServicesLoading());
 
-    final result = await _servicesRepository.getServices();
+    final result = await _getSericesUseCase.getServices();
 
     if (isClosed) return;
 

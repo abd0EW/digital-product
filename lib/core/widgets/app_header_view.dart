@@ -1,5 +1,5 @@
 import 'package:digital_product/core/constants/app_colors.dart';
-import 'package:digital_product/core/constants/app_spacing.dart';
+
 import 'package:digital_product/core/widgets/app_text.dart';
 import 'package:flutter/material.dart';
 

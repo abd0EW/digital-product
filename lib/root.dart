@@ -1,6 +1,6 @@
 import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/constants/app_radius.dart';
-import 'package:digital_product/splash_view.dart';
+import 'package:digital_product/features/auth/presentation/views/auth_view.dart';
 import 'package:digital_product/features/dashboard_user/notifications/presentation/views/notifications_view.dart';
 import 'package:digital_product/features/dashboard_user/orders/presentation/views/orders_view.dart';
 import 'package:digital_product/features/dashboard_user/profile/presentation/views/profile_view.dart';
@@ -12,7 +12,7 @@ class Root extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SplashView();
+    return const AuthView();
   }
 }
 

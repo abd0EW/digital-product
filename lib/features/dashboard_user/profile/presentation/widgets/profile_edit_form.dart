@@ -4,24 +4,25 @@ import 'package:digital_product/core/utils/app_validators.dart';
 import 'package:digital_product/core/widgets/app_button.dart';
 import 'package:digital_product/core/widgets/app_text.dart';
 import 'package:digital_product/core/widgets/app_text_field.dart';
-import 'package:digital_product/features/dashboard_user/profile/presentation/widgets/profile_info_row.dart';
 import 'package:flutter/material.dart';
 
 class ProfileEditForm extends StatefulWidget {
   const ProfileEditForm({
     required this.nameController,
     required this.phoneController,
-    required this.email,
+    required this.emailController,
     required this.onSave,
     required this.onCancel,
+    this.isSaving = false,
     super.key,
   });
 
   final TextEditingController nameController;
   final TextEditingController phoneController;
-  final String email;
+  final TextEditingController emailController;
   final VoidCallback onSave;
   final VoidCallback onCancel;
+  final bool isSaving;
 
   @override
   State<ProfileEditForm> createState() => _ProfileEditFormState();
@@ -61,7 +62,14 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
             keyboardType: TextInputType.phone,
           ),
           const SizedBox(height: AppSpacing.sm),
-          ProfileInfoRow(label: 'البريد الإلكتروني', value: widget.email),
+          AppTextField(
+            controller: widget.emailController,
+            label: 'البريد الإلكتروني',
+            hintText: 'أدخل بريدك الإلكتروني',
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.done,
+            validator: AppValidators.email,
+          ),
           const SizedBox(height: AppSpacing.md),
           Row(
             children: [
@@ -70,8 +78,8 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
                   padding: const EdgeInsets.only(right: 8.0, bottom: 8),
                   child: AppButton(
                     title: 'حفظ التغييرات',
-                    onPressed: _submit,
-
+                    onPressed: widget.isSaving ? null : _submit,
+                    isLoading: widget.isSaving,
                     backgroundColor: AppColors.navyPrimary,
                     foregroundColor: AppColors.whiteText,
                   ),
@@ -83,7 +91,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
                   padding: const EdgeInsets.only(right: 8.0, bottom: 8),
                   child: AppButton(
                     title: 'إلغاء',
-                    onPressed: widget.onCancel,
+                    onPressed: widget.isSaving ? null : widget.onCancel,
                     backgroundColor: AppColors.secondaryButtonBackground,
                     foregroundColor: AppColors.appBackground,
                   ),

@@ -1,11 +1,11 @@
-import 'package:digital_product/core/errors/app_exception.dart';
+import 'package:digital_product/core/errors/app_fail.dart';
 
 class AuthErrorMessageHandler {
   const AuthErrorMessageHandler._();
 
-  static String getMessage(AppException exception) {
-    final code = exception.code?.toLowerCase();
-    final message = exception.message.toLowerCase();
+  static String getMessage(AppFail fail) {
+    final message = fail.message.toLowerCase().trim();
+    final code = fail.code?.toLowerCase().trim();
 
     switch (code) {
       case 'invalid_credentials':
@@ -32,10 +32,15 @@ class AuthErrorMessageHandler {
       return 'يرجى تأكيد البريد الإلكتروني أولًا.';
     }
 
-    if (message.contains('already registered')) {
+    if (message.contains('already registered') ||
+        message.contains('user already exists')) {
       return 'هذا البريد الإلكتروني مسجل بالفعل.';
     }
 
-    return 'حدث خطأ غير متوقع، حاول مرة أخرى.';
+    if (message.contains('rate limit')) {
+      return 'تم إرسال محاولات كثيرة، حاول مرة أخرى لاحقًا.';
+    }
+
+    return 'حدث خطأ غير متوقع، حاول مرة أخرى.$message';
   }
 }

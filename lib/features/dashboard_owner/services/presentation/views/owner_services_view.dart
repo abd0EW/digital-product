@@ -1,94 +1,116 @@
 import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/constants/app_spacing.dart';
+import 'package:digital_product/core/di/service_locator.dart';
+import 'package:digital_product/core/utils/app_snackbar.dart';
+import 'package:digital_product/core/widgets/app_bottom_sheet_btn.dart';
 import 'package:digital_product/core/widgets/app_text.dart';
-import 'package:digital_product/features/dashboard_owner/services/data/models/owner_service_model.dart';
+import 'package:digital_product/features/dashboard_owner/services/presentation/viewmodels/owner_get_services_cubit/owner_get_services_cubit.dart';
+import 'package:digital_product/features/dashboard_owner/services/presentation/viewmodels/owner_update_services_cubit/owner_update_services_cubit.dart';
 import 'package:digital_product/features/dashboard_owner/services/presentation/widgets/owner_services_section.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class OwnerServicesView extends StatelessWidget {
   const OwnerServicesView({super.key});
 
-  static const List<OwnerServiceModel> _generalServices = [
-    OwnerServiceModel(
-      name: 'التحرير اللغوي',
-      price: '3',
-      unit: 'لكل صفحة',
-      paymentInfo: 'دفع بعد',
-      isEnabled: true,
-      category: 'الخدمات المتاحة',
-    ),
-    OwnerServiceModel(
-      name: 'التدقيق اللغوي',
-      price: '4',
-      unit: 'لكل صفحة',
-      paymentInfo: 'دفع بعد',
-      isEnabled: true,
-      category: 'الخدمات المتاحة',
-    ),
-    OwnerServiceModel(
-      name: 'التدقيق الإملائي',
-      price: '2',
-      unit: 'لكل صفحة',
-      paymentInfo: 'دفع مسبق',
-      isEnabled: false,
-      category: 'الخدمات المتاحة',
-    ),
-  ];
-
-  static const List<OwnerServiceModel> _educationServices = [
-    OwnerServiceModel(
-      name: 'حل الواجبات',
-      price: '20',
-      unit: 'لكل واجب',
-      paymentInfo: 'حسب نوع الواجب',
-      isEnabled: true,
-      category: 'الخدمات التعليمية',
-    ),
-    OwnerServiceModel(
-      name: 'تلخيص الأبحاث',
-      price: '15',
-      unit: 'لكل صفحة',
-      paymentInfo: 'حسب عدد الصفحات',
-      isEnabled: true,
-      category: 'الخدمات التعليمية',
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.appBackground,
-      body: SafeArea(
-        child: CustomScrollView(
-          physics: const BouncingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => OwnerUpdateServicesCubit(ServiceLocator.sl()),
+        ),
+
+        BlocProvider(
+          create: (_) =>
+              OwnerGetServicesCubit(ServiceLocator.sl())..getServices(),
+        ),
+      ],
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<OwnerGetServicesCubit, OwnerGetServicesState>(
+            listener: (context, state) {
+              if (state is OwnerGetServicesSuccess) {
+                context
+                    .read<OwnerUpdateServicesCubit>()
+                    .initializeOriginalStatuses(state.serviceModel);
+              } else if (state is OwnerGetServicesFailure &&
+                  state.serviceModel.isNotEmpty) {
+                AppSnackbar.error(
+                  context,
+                  message: 'تعذر تحديث قائمة الخدمات: ${state.failureMessage}',
+                );
+              }
+            },
           ),
-          slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.md,
-                  AppSpacing.lg,
-                  AppSpacing.md,
-                  AppSpacing.md,
-                ),
-                child: AppText.title(
-                  'إدارة الخدمات',
-                  textAlign: TextAlign.right,
-                ),
+
+          BlocListener<OwnerUpdateServicesCubit, OwnerUpdateServicesState>(
+            listener: (context, state) {
+              if (state is OwnerUpdateServicesSuccess) {
+                AppSnackbar.success(context, message: 'تم حفظ التعديلات بنجاح');
+                if (state.successfullySavedServiceIds.isNotEmpty) {
+                  context.read<OwnerGetServicesCubit>().getServices();
+                }
+              } else if (state is OwnerUpdateServicesFailure) {
+                AppSnackbar.error(context, message: state.failureMessage);
+                if (state.successfullySavedServiceIds.isNotEmpty) {
+                  context.read<OwnerGetServicesCubit>().getServices();
+                }
+              }
+            },
+          ),
+        ],
+        child: Scaffold(
+          backgroundColor: AppColors.appBackground,
+          body: const SafeArea(
+            child: CustomScrollView(
+              physics: BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
               ),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      AppSpacing.md,
+                      AppSpacing.lg,
+                      AppSpacing.md,
+                      AppSpacing.md,
+                    ),
+                    child: AppText.title(
+                      'إدارة الخدمات',
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                ),
+                OwnerServicesSection(),
+              ],
             ),
-            OwnerServicesSection(
-              title: 'الخدمات المتاحة',
-              services: _generalServices,
-            ),
-            const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.md)),
-            OwnerServicesSection(
-              title: 'الخدمات التعليمية',
-              services: _educationServices,
-            ),
-            const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.xl)),
-          ],
+          ),
+          bottomSheet:
+              BlocSelector<
+                OwnerUpdateServicesCubit,
+                OwnerUpdateServicesState,
+                ({bool hasPendingChanges, bool isSaving})
+              >(
+                selector: (state) => (
+                  hasPendingChanges: state.changedServices.isNotEmpty,
+                  isSaving: state is OwnerUpdateServicesSaving,
+                ),
+                builder: (context, buttonState) {
+                  if (!buttonState.hasPendingChanges) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return AppBottomSheetBtn(
+                    title: 'حفظ التعديلات',
+                    isLoading: buttonState.isSaving,
+                    disabled: buttonState.isSaving,
+                    onPressed: context
+                        .read<OwnerUpdateServicesCubit>()
+                        .saveChanges,
+                  );
+                },
+              ),
         ),
       ),
     );

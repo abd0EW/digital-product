@@ -24,7 +24,7 @@ class PaymentSelector extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.secondaryButtonBackground.withOpacity(0.08)
+              ? AppColors.secondaryButtonBackground.withValues(alpha: 0.08)
               : AppColors.cardBackground,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(

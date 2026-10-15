@@ -1,6 +1,7 @@
 import 'package:digital_product/core/constants/app_colors.dart';
+import 'package:digital_product/core/utils/app_snackbar.dart';
 import 'package:digital_product/core/widgets/app_button.dart';
-import 'package:digital_product/features/auth/domain/entities/profile_entity.dart';
+import 'package:digital_product/features/auth/data/models/profile_model.dart';
 import 'package:digital_product/features/auth/domain/enums/user_role.dart';
 import 'package:digital_product/features/auth/presentation/viewmodels/auth_cubit.dart';
 import 'package:digital_product/features/auth/presentation/viewmodels/auth_state.dart';
@@ -11,9 +12,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AuthenticatedRootView extends StatelessWidget {
-  const AuthenticatedRootView({required this.profile, super.key});
+  const AuthenticatedRootView({
+    required this.profile,
+    super.key,
+    required this.passwordController,
+    required this.newPasswordController,
+  });
 
-  final ProfileEntity profile;
+  final ProfileModel profile;
+  final TextEditingController passwordController;
+  final TextEditingController newPasswordController;
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +33,7 @@ class AuthenticatedRootView extends StatelessWidget {
             (route) => false,
           );
         } else if (state is AuthFailure) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.message)));
+          AppSnackbar.error(context, message: state.message);
         }
       },
       child: switch (profile.role) {

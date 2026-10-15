@@ -1,42 +1,49 @@
-import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/constants/app_spacing.dart';
-import 'package:digital_product/core/widgets/app_text.dart';
-import 'package:digital_product/features/dashboard_owner/services/data/models/owner_service_model.dart';
+import 'package:digital_product/core/widgets/app_fail_state_silver.dart';
+import 'package:digital_product/core/widgets/app_state_loading_silver.dart';
+
+import 'package:digital_product/features/dashboard_owner/services/presentation/viewmodels/owner_get_services_cubit/owner_get_services_cubit.dart';
 import 'package:digital_product/features/dashboard_owner/services/presentation/widgets/owner_service_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class OwnerServicesSection extends StatelessWidget {
-  const OwnerServicesSection({
-    required this.title,
-    required this.services,
-    super.key,
-  });
-
-  final String title;
-  final List<OwnerServiceModel> services;
+  const OwnerServicesSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-      sliver: SliverList(
-        delegate: SliverChildListDelegate([
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: AppText.switches(
-              title,
-              textAlign: TextAlign.right,
-              color: AppColors.headingText,
+    return BlocBuilder<OwnerGetServicesCubit, OwnerGetServicesState>(
+      builder: (context, state) {
+        if (state is OwnerGetServicesLoading && state.serviceModel.isEmpty) {
+          return const AppStateLoadingSilver();
+        }
+
+        if (state is OwnerGetServicesFailure && state.serviceModel.isEmpty) {
+          return AppFailStateSilver(failureMessage: state.failureMessage);
+        }
+
+        final services = switch (state) {
+          OwnerGetServicesSuccess(:final serviceModel) => serviceModel,
+          OwnerGetServicesLoading(:final serviceModel) => serviceModel,
+          OwnerGetServicesFailure(:final serviceModel) => serviceModel,
+          _ => const [],
+        };
+
+        if (services.isNotEmpty) {
+          return SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+            sliver: SliverList.builder(
+              itemCount: services.length,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                child: OwnerServiceCard(service: services[index]),
+              ),
             ),
-          ),
-          ...services.map(
-            (service) => Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-              child: OwnerServiceCard(service: service, onEdit: () {}),
-            ),
-          ),
-        ]),
-      ),
+          );
+        }
+
+        return const SliverToBoxAdapter(child: SizedBox.shrink());
+      },
     );
   }
 }

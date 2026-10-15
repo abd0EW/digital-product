@@ -1,3 +1,5 @@
+import 'package:digital_product/features/auth/domain/enums/user_role.dart';
+
 sealed class AuthState {
   const AuthState();
 }
@@ -11,12 +13,17 @@ final class AuthLoading extends AuthState {
 }
 
 final class AuthLoginSuccess extends AuthState {
-  const AuthLoginSuccess();
+  const AuthLoginSuccess({required this.role});
+
+  final UserRole role;
 }
 
 final class AuthRegistrationSuccess extends AuthState {
-  const AuthRegistrationSuccess({required this.email});
-
+  const AuthRegistrationSuccess({
+    required this.email,
+    required this.acountType,
+  });
+  final String acountType;
   final String email;
 }
 
@@ -30,6 +37,10 @@ final class AuthPasswordResetEmailSent extends AuthState {
 
 final class AuthVerificationEmailSent extends AuthState {
   const AuthVerificationEmailSent();
+}
+
+final class AuthUpdatedPassword extends AuthState {
+  const AuthUpdatedPassword();
 }
 
 final class AuthVerificationStatus extends AuthState {

@@ -1,15 +1,17 @@
 import 'package:digital_product/core/constants/app_colors.dart';
+import 'package:digital_product/core/utils/app_snackbar.dart';
 import 'package:digital_product/features/auth/presentation/viewmodels/auth_cubit.dart';
 import 'package:digital_product/features/auth/presentation/viewmodels/auth_state.dart';
+import 'package:digital_product/features/auth/presentation/views/forgot_password_view.dart';
 import 'package:digital_product/features/auth/presentation/widgets/login_content.dart';
 import 'package:digital_product/features/auth/presentation/widgets/responsive_auth_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginView extends StatefulWidget {
-  final VoidCallback onRegisterPressed;
-
   const LoginView({super.key, required this.onRegisterPressed});
+
+  final VoidCallback onRegisterPressed;
 
   @override
   State<LoginView> createState() => _LoginViewState();
@@ -18,18 +20,18 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  final TextEditingController newPasswordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-
+    newPasswordController.dispose();
     super.dispose();
   }
 
-  void _validateForm() {
+  void _validateLoginForm() {
     FocusManager.instance.primaryFocus?.unfocus();
 
     if (!(_formKey.currentState?.validate() ?? false)) {
@@ -39,6 +41,27 @@ class _LoginViewState extends State<LoginView> {
     context.read<AuthCubit>().login(
       email: _emailController.text.trim(),
       password: _passwordController.text,
+    );
+  }
+
+  void _forgotPassword() {
+    FocusManager.instance.primaryFocus?.unfocus();
+    final email = _emailController.text.trim();
+    if (email.isEmpty) {
+      AppSnackbar.warning(context, message: 'أدخل بريدك الإلكتروني أولًا.');
+      return;
+    }
+    context.read<AuthCubit>().forgotPassword(
+      email: email,
+      onRecovery: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ResetPasswordView(
+            newPasswordController: newPasswordController,
+            onUpdatePasswordPressed: () {},
+          ),
+        ),
+      ),
     );
   }
 
@@ -73,8 +96,8 @@ class _LoginViewState extends State<LoginView> {
                               return LoginContent(
                                 emailController: _emailController,
                                 passwordController: _passwordController,
-                                onLoginPressed: _validateForm,
-                                onForgotPasswordPressed: () {},
+                                onLoginPressed: _validateLoginForm,
+                                onForgotPasswordPressed: _forgotPassword,
                                 onRegisterPressed: widget.onRegisterPressed,
                                 isLoading: state is AuthLoading,
                               );

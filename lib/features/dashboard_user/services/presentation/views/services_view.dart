@@ -1,12 +1,12 @@
-import 'dart:async';
 import 'package:digital_product/core/constants/app_colors.dart';
+import 'package:digital_product/core/di/service_locator.dart';
 import 'package:digital_product/core/widgets/app_search_silver_appbar.dart';
 import 'package:digital_product/core/widgets/app_show_model_bottom_sheet.dart';
+import 'package:digital_product/features/dashboard_user/orders/presentation/viewmodels/create_order/order_cubit.dart';
+import 'package:digital_product/features/dashboard_user/orders/presentation/viewmodels/create_order/submit_order_cubit.dart';
 import 'package:digital_product/features/dashboard_user/services/data/models/service_model.dart';
-import 'package:digital_product/features/dashboard_user/services/data/remote_data_source/services_remote_data_source.dart';
-import 'package:digital_product/features/dashboard_user/services/data/repositories/services_repository_impl.dart';
 import 'package:digital_product/features/dashboard_user/services/presentation/view_model/services/services_cubit.dart';
-import 'package:digital_product/features/dashboard_user/services/presentation/widgets/service_order_bottom_sheet.dart';
+import 'package:digital_product/features/dashboard_user/orders/presentation/widgets/create_order_bottom_sheet.dart';
 import 'package:digital_product/features/dashboard_user/services/presentation/widgets/services_silver_body.dart';
 import 'package:digital_product/features/dashboard_user/services/presentation/widgets/services_silver_toggle.dart';
 import 'package:flutter/material.dart';
@@ -36,12 +36,21 @@ class _ServicesViewState extends State<ServicesView> {
   void onServicePressed(ServiceModel service) {
     AppShowModelBottomSheet.appShowModalBottomSheet(
       context,
-
-      Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.viewInsetsOf(context).bottom,
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<CreateOrderCubit>(
+            create: (_) => ServiceLocator.sl<CreateOrderCubit>(),
+          ),
+          BlocProvider<SubmitOrderCubit>(
+            create: (_) => ServiceLocator.sl<SubmitOrderCubit>(),
+          ),
+        ],
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.viewInsetsOf(context).bottom,
+          ),
+          child: CreateOrderBottomSheet(service: service),
         ),
-        child: ServiceOrderBottomSheet(service: service),
       ),
     );
   }
@@ -51,9 +60,7 @@ class _ServicesViewState extends State<ServicesView> {
     return Scaffold(
       backgroundColor: AppColors.appBackground,
       body: BlocProvider(
-        create: (context) => ServicesCubit(
-          ServicesRepositoryImpl(ServicesRemoteDataSourceImpl()),
-        )..getServices(),
+        create: (context) => ServiceLocator.sl<ServicesCubit>()..getServices(),
         child: Builder(
           builder: (context) => Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5.0),
@@ -72,7 +79,7 @@ class _ServicesViewState extends State<ServicesView> {
                     textHedader: "الخدمات المتاحه",
                   ),
 
-                  ServicesSilverToggle(),
+                  const ServicesSilverToggle(),
 
                   ServicesSliverBody(onServicePressed: onServicePressed),
                 ],

@@ -18,15 +18,13 @@ class ServicesRemoteDataSourceImpl implements ServicesRemoteDataSource {
       final response = await _client
           .from('services')
           .select()
-          .eq('is_active', true)
+          .eq("is_active", true)
           .order('sort_order', ascending: true);
-      print("response ${response}");
+
       return (response as List)
           .map((row) => ServiceModel.fromJson(Map<String, dynamic>.from(row)))
           .toList();
     } catch (e) {
-      print("=============================================");
-      print("${e.toString()}");
       rethrow;
     }
   }
