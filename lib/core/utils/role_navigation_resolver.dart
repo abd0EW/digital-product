@@ -1,10 +1,12 @@
 import 'package:digital_product/features/auth/domain/enums/user_role.dart';
 import 'package:digital_product/features/dashboard_owner/root/presentation/views/owner_root_view.dart';
+import 'package:digital_product/features/dashboard_user/root_user.dart';
 import 'package:digital_product/features/dashboard_worker/root/presentation/views/worker_root_view.dart';
-import 'package:digital_product/root.dart';
 import 'package:flutter/material.dart';
 
 class RoleNavigationResolver {
+  RoleNavigationResolver._();
+
   static final Map<UserRole, WidgetBuilder> _routes = {
     UserRole.user: (_) => const UserRootView(),
     UserRole.owner: (_) => const OwnerRootView(),
@@ -17,10 +19,9 @@ class RoleNavigationResolver {
     if (builder == null) {
       throw UnsupportedError('Unsupported role: $role');
     }
-    Navigator.pushAndRemoveUntil(
+
+    Navigator.of(
       context,
-      MaterialPageRoute(builder: (context) => builder(context)),
-      (route) => false,
-    );
+    ).pushAndRemoveUntil(MaterialPageRoute(builder: builder), (_) => false);
   }
 }

@@ -1,6 +1,7 @@
-import 'package:digital_product/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:digital_product/core/errors/app_fail.dart';
 import 'package:digital_product/features/auth/domain/enums/user_role.dart';
 import 'package:digital_product/features/auth/domain/failures/auth_error_message_handler.dart';
+import 'package:digital_product/features/auth/domain/failures/auth_fail.dart';
 import 'package:digital_product/features/auth/domain/repositories/auth_repository.dart';
 
 import 'package:digital_product/features/auth/presentation/viewmodels/auth_state.dart';
@@ -8,42 +9,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit(AuthRepositoryImpl authRepositoryImpl, {required this.repository})
-    : super(const AuthInitial());
+  AuthCubit({required this.repository}) : super(const AuthInitial());
 
   final AuthRepository repository;
+
   Future<void> login({required String email, required String password}) async {
     emit(const AuthLoading());
 
     try {
       final result = await repository.login(email: email, password: password);
-      print("===========================");
-      print(result);
       if (isClosed) return;
-
-      await result.fold(
-        (failure) async {
-          _emitFailure(failure);
-          return;
-        },
-        (Success) async {
-          final role = await repository.getUserRole();
-          print("===========================");
-          print(role);
-          await role.fold(
-            (failure) {
-              _emitFailure(failure);
-            },
-            (role) {
-              emit(AuthLoginSuccess(role: role));
-            },
-          );
-          if (isClosed) return;
-        },
+      result.fold(
+        (failure) => _emitFailure(failure),
+        (_) => emit(const AuthLoginSuccess()),
       );
     } catch (e) {
       if (isClosed) return;
-      _emitFailure(e);
+      _emitFailure(AuthFail(message: e.toString()));
     }
   }
 
@@ -83,6 +65,21 @@ class AuthCubit extends Cubit<AuthState> {
     result.fold(
       (exception) => _emitFailure(exception),
       (_) => emit(const AuthLoggedOut()),
+    );
+  }
+
+  Future<UserRole> getCurrentUserRole() async {
+    final result = await repository.getUserRole();
+
+    return result.fold(
+      (exception) {
+        _emitFailure(exception);
+        throw exception;
+      },
+      (role) {
+        emit(AuthAuthenticated(role: role));
+        return role;
+      },
     );
   }
 
@@ -144,7 +141,7 @@ class AuthCubit extends Cubit<AuthState> {
     });
   }
 
-  void _emitFailure(exception) {
+  void _emitFailure(AppFail exception) {
     emit(AuthFailure(message: AuthErrorMessageHandler.getMessage(exception)));
   }
 }

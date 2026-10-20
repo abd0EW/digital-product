@@ -88,4 +88,51 @@ class GetOrderRemoteDataSourceImpl implements GetOrderRemoteDataSource {
 
     return response.map((json) => OrderFileModel.fromJson(json)).toList();
   }
+
+  @override
+  Future<List<OrderModel>> getAllOrders() async {
+    final user = _client.auth.currentUser;
+    if (user == null) {
+      throw Exception('User is not authenticated');
+    }
+
+    final response = await _client
+        .from('orders')
+        .select('*, service:services(*)')
+        .order('created_at', ascending: false);
+
+    final orderRows = response
+        .map((order) => Map<String, dynamic>.from(order))
+        .toList(growable: false);
+    final workerIds = orderRows
+        .map((order) => order['worker_id'] as String?)
+        .whereType<String>()
+        .where((workerId) => workerId.trim().isNotEmpty)
+        .toSet()
+        .toList(growable: false);
+    final workerNamesById = <String, String>{};
+
+    if (workerIds.isNotEmpty) {
+      final workers = await _client
+          .from('profiles')
+          .select('id, full_name')
+          .inFilter('id', workerIds);
+
+      for (final worker in workers) {
+        final row = Map<String, dynamic>.from(worker);
+        final id = row['id'] as String?;
+        final fullName = row['full_name'] as String?;
+        if (id != null && fullName != null && fullName.trim().isNotEmpty) {
+          workerNamesById[id] = fullName;
+        }
+      }
+    }
+
+    return orderRows
+        .map<OrderModel>((order) {
+          order['worker_name'] = workerNamesById[order['worker_id']];
+          return OrderModel.fromJson(order);
+        })
+        .toList(growable: false);
+  }
 }

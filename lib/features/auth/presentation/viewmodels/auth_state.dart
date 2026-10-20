@@ -13,9 +13,7 @@ final class AuthLoading extends AuthState {
 }
 
 final class AuthLoginSuccess extends AuthState {
-  const AuthLoginSuccess({required this.role});
-
-  final UserRole role;
+  const AuthLoginSuccess();
 }
 
 final class AuthRegistrationSuccess extends AuthState {
@@ -41,6 +39,11 @@ final class AuthVerificationEmailSent extends AuthState {
 
 final class AuthUpdatedPassword extends AuthState {
   const AuthUpdatedPassword();
+}
+
+final class AuthAuthenticated extends AuthState {
+  final UserRole role;
+  const AuthAuthenticated({required this.role});
 }
 
 final class AuthVerificationStatus extends AuthState {

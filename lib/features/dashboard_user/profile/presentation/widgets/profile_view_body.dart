@@ -1,7 +1,10 @@
 import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/constants/app_spacing.dart';
 import 'package:digital_product/core/utils/app_snackbar.dart';
-import 'package:digital_product/features/auth/presentation/views/auth_view.dart';
+import 'package:digital_product/features/dashboard_user/profile/data/remote_data_source/get_profile.dart/get_profile_remote_data_source.dart';
+import 'package:digital_product/features/dashboard_user/profile/data/repositories/profile_repo/profile_repository_impl.dart';
+import 'package:digital_product/features/dashboard_user/profile/domain/usecases/get_profile_usecase.dart';
+import 'package:digital_product/features/dashboard_user/profile/domain/usecases/logout_usecase.dart';
 import 'package:digital_product/features/dashboard_user/profile/presentation/viewmodels/profile_cubit/profile_cubit.dart';
 import 'package:digital_product/features/dashboard_user/profile/presentation/viewmodels/profile_cubit/profile_state.dart';
 import 'package:digital_product/features/dashboard_user/profile/presentation/widgets/profile_content.dart';
@@ -18,48 +21,50 @@ class ProfileViewBody extends StatelessWidget {
 
     final horizontalPadding = width < 600 ? AppSpacing.md : AppSpacing.xl;
 
-    return BlocListener<ProfileCubit, ProfileState>(
-      listener: (context, state) {
-        if (state is ProfileLogoutSuccess) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute<void>(builder: (_) => const AuthView()),
-            (route) => false,
-          );
-        } else if (state is ProfileLogoutFailure) {
-          AppSnackbar.error(context, message: state.message);
-        }
-      },
-      child: Scaffold(
-        backgroundColor: AppColors.appBackground,
-        body: SafeArea(
-          child: CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(
-                  horizontalPadding,
-                  AppSpacing.md,
-                  horizontalPadding,
-                  0,
-                ),
-                sliver: const SliverToBoxAdapter(child: ProfileContent()),
-              ),
+    return BlocProvider(
+      create: (context) => ProfileCubit(
+        GetProfileUseCase(ProfileRepositoryImpl(ProfileRemoteDataSourceImpl())),
 
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: Padding(
+        LogoutUseCase(ProfileRepositoryImpl(ProfileRemoteDataSourceImpl())),
+      )..loadProfile(),
+      child: BlocListener<ProfileCubit, ProfileState>(
+        listener: (context, state) {
+          if (state is ProfileLogoutFailure) {
+            AppSnackbar.error(context, message: state.message);
+          }
+        },
+        child: Scaffold(
+          backgroundColor: AppColors.appBackground,
+          body: SafeArea(
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                SliverPadding(
                   padding: EdgeInsets.fromLTRB(
                     horizontalPadding,
                     AppSpacing.md,
                     horizontalPadding,
-                    AppSpacing.md,
+                    0,
                   ),
-                  child: const Column(
-                    children: [Spacer(), ProfileLogoutButton()],
+                  sliver: const SliverToBoxAdapter(child: ProfileContent()),
+                ),
+
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      horizontalPadding,
+                      AppSpacing.md,
+                      horizontalPadding,
+                      AppSpacing.md,
+                    ),
+                    child: const Column(
+                      children: [Spacer(), ProfileLogoutButton()],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

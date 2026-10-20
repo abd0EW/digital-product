@@ -1,7 +1,9 @@
 import 'package:digital_product/features/dashboard_user/orders/data/models/order_model.dart';
 import 'package:digital_product/features/dashboard_user/orders/domain/failures/order_error_message_handler.dart';
+import 'package:digital_product/features/dashboard_user/orders/domain/failures/order_failure.dart';
 import 'package:digital_product/features/dashboard_user/orders/domain/usecases/get_orders_usecase.dart';
 import 'package:digital_product/features/dashboard_user/orders/presentation/viewmodels/get_order/get_order_state.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GetOrderCubit extends Cubit<GetOrderState> {
@@ -18,8 +20,19 @@ class GetOrderCubit extends Cubit<GetOrderState> {
   bool _isFetching = false;
 
   List<OrderModel> get allOrders => _allOrders;
+  String? get selectedStatus => _selectedStatus;
 
   Future<void> getOrders() async {
+    await _loadOrders(_getOrdersUsecase.call);
+  }
+
+  Future<void> getOwnerOrders() async {
+    await _loadOrders(_getOrdersUsecase.getAllOrders);
+  }
+
+  Future<void> _loadOrders(
+    Future<Either<OrderFailure, List<OrderModel>>> Function() loadOrders,
+  ) async {
     if (_hasLoadedOrders) return;
 
     if (_isFetching) return;
@@ -29,7 +42,7 @@ class GetOrderCubit extends Cubit<GetOrderState> {
     emit(const GetOrderLoading());
 
     try {
-      final result = await _getOrdersUsecase();
+      final result = await loadOrders();
 
       if (isClosed) return;
 
@@ -85,7 +98,11 @@ class GetOrderCubit extends Cubit<GetOrderState> {
     }
 
     return _allOrders
-        .where((order) => order.status == _selectedStatus)
+        .where(
+          (order) =>
+              order.status.trim().toLowerCase() ==
+              _selectedStatus!.trim().toLowerCase(),
+        )
         .toList();
   }
 

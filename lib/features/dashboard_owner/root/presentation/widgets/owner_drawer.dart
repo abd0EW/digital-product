@@ -57,12 +57,6 @@ class OwnerDrawer extends StatelessWidget {
                     isSelected: selectedSection == OwnerSection.payments,
                     onTap: () => _selectSection(context, OwnerSection.payments),
                   ),
-                  OwnerDrawerItem(
-                    title: 'الإعدادات',
-                    icon: Icons.settings_rounded,
-                    isSelected: selectedSection == OwnerSection.settings,
-                    onTap: () => _selectSection(context, OwnerSection.settings),
-                  ),
                 ],
               ),
             ),

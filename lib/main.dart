@@ -1,7 +1,7 @@
+import 'package:app_links/app_links.dart';
 import 'package:digital_product/core/di/service_locator.dart';
-import 'package:digital_product/features/auth/data/remote_data_source/auth_remote_data_source_impl.dart';
+import 'package:digital_product/features/dashboard_owner/payments/presentation/views/owner_payments_view.dart';
 import 'package:digital_product/root.dart';
-import 'package:digital_product/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:digital_product/features/auth/presentation/viewmodels/auth_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -20,27 +20,50 @@ Future<void> main() async {
   runApp(DevicePreview(enabled: true, builder: (context) => const MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final GlobalKey<NavigatorState> _navigatorState = GlobalKey<NavigatorState>();
+
+  @override
+  void initState() {
+    super.initState();
+    initDeeplink();
+  }
+
+  Future<void> initDeeplink() async {
+    final appLink = AppLinks();
+
+    final initialLink = await appLink.getInitialLink();
+    if (initialLink != null) handleIncomingLink(initialLink);
+
+    appLink.uriLinkStream.listen((uri) {
+      handleIncomingLink(uri);
+    });
+  }
+
+  void handleIncomingLink(Uri uri) {
+    if (uri.scheme == 'digitalproduct' && uri.host == 'invite_email') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const OwnerPaymentsView()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AuthCubit(
-        AuthRepositoryImpl(
-          authRemoteDataSource: AuthRemoteDataSourceImpl(
-            client: Supabase.instance.client,
-          ),
-        ),
-        repository: AuthRepositoryImpl(
-          authRemoteDataSource: AuthRemoteDataSourceImpl(
-            client: Supabase.instance.client,
-          ),
-        ),
-      ),
-      child: const MaterialApp(
-        locale: Locale('ar', 'SA'),
-        supportedLocales: [Locale('ar', 'SA')],
+      create: (_) => ServiceLocator.sl<AuthCubit>(),
+      child: MaterialApp(
+        key: _navigatorState,
+        locale: const Locale('ar', 'SA'),
+        supportedLocales: [const Locale('ar', 'SA')],
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
@@ -48,7 +71,7 @@ class MyApp extends StatelessWidget {
         ],
         debugShowCheckedModeBanner: false,
         title: 'Digital Product',
-        home: Root(),
+        home: const Root(),
       ),
     );
   }

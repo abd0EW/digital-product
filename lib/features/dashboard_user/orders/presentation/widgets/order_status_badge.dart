@@ -15,12 +15,12 @@ class OrderStatusBadge extends StatelessWidget {
     final normalizedStatus = status.trim().toLowerCase();
     final backgroundColor = switch (normalizedStatus) {
       'completed' => AppColors.successBackground,
-      'pending' => AppColors.warningBackground,
+      'pending' || 'in_progress' => AppColors.warningBackground,
       _ => AppColors.cardBorder,
     };
     final foregroundColor = switch (normalizedStatus) {
       'completed' => AppColors.success,
-      'pending' => AppColors.warning,
+      'pending' || 'in_progress' => AppColors.warning,
       _ => AppColors.headingText,
     };
 

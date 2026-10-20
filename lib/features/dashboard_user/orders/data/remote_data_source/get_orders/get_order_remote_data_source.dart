@@ -6,6 +6,8 @@ abstract class GetOrderRemoteDataSource {
 
   Future<List<OrderModel>> getUserOrders();
 
+  Future<List<OrderModel>> getAllOrders();
+
   Future<OrderModel?> getUserOrderById({required String orderId});
 
   Future<List<OrderFileModel>> getOrderFiles({required String orderId});

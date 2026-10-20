@@ -2,8 +2,26 @@ import 'package:digital_product/core/utils/file_url_resolver/file_url_resolver.d
 import 'package:digital_product/core/utils/file_url_resolver/file_url_resolver_impl.dart';
 import 'package:digital_product/core/utils/mime_type/mime_type_resolver.dart';
 import 'package:digital_product/core/utils/mime_type/mime_type_resolver_impl.dart';
+import 'package:digital_product/features/auth/data/remote_data_source/auth_email_remote_data/auth_email_remote_data_source.dart';
+
+import 'package:digital_product/features/auth/data/remote_data_source/auth_email_remote_data/auth_email_remote_data_source_impl.dart';
+import 'package:digital_product/features/auth/data/remote_data_source/auth_password_remote_data/auth_password_remote_data_source.dart';
+import 'package:digital_product/features/auth/data/remote_data_source/auth_password_remote_data/auth_password_remote_data_source_impl.dart';
+import 'package:digital_product/features/auth/data/remote_data_source/auth_remote_data/auth_remote_data_source.dart';
+import 'package:digital_product/features/auth/data/remote_data_source/auth_remote_data/auth_remote_data_source_impl.dart';
+import 'package:digital_product/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:digital_product/features/auth/domain/repositories/auth_repository.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/auth_cubit.dart';
 import 'package:digital_product/features/dashboard_owner/services/data/datasources/owner_services_remote_data_source.dart';
 import 'package:digital_product/features/dashboard_owner/services/domain/usecase/get_services__owner_use_case.dart';
+import 'package:digital_product/features/dashboard_owner/team/data/data_remote_datasource/worker_invitation_remote_data_source.dart';
+import 'package:digital_product/features/dashboard_owner/team/data/data_remote_datasource/worker_invitation_remote_data_source_impl.dart';
+import 'package:digital_product/features/dashboard_owner/team/data/repositories/worker_invitation_repository_impl.dart';
+import 'package:digital_product/features/dashboard_owner/team/domain/repositories/worker_invitation_repository.dart';
+import 'package:digital_product/features/dashboard_owner/team/domain/usecases/get_worker_invitations_use_case.dart';
+import 'package:digital_product/features/dashboard_owner/team/domain/usecases/invite_worker_use_case.dart';
+import 'package:digital_product/features/dashboard_owner/team/presentation/viewmodels/invite_worker_cubit/invite_worker_cubit.dart';
+import 'package:digital_product/features/dashboard_owner/team/presentation/viewmodels/worker_invitations_cubit/get_workers_cubit.dart';
 import 'package:digital_product/features/dashboard_user/notifications/data/remote_data_source/notification_remote_data_source.dart';
 import 'package:digital_product/features/dashboard_user/notifications/presentation/viewmodels/cubit/notification_cubit.dart';
 
@@ -19,10 +37,8 @@ import 'package:digital_product/features/dashboard_user/orders/data/remote_data_
 
 import 'package:digital_product/features/dashboard_user/orders/data/repositories_impl/create_order_repository_impl.dart/create_orders_repository_impl.dart';
 import 'package:digital_product/features/dashboard_user/orders/data/repositories_impl/get_order_repository_impl/get_order_repository_impl.dart';
-
 import 'package:digital_product/features/dashboard_user/orders/domain/repositories/create_order_repository/create_orders_repository.dart';
 import 'package:digital_product/features/dashboard_user/orders/domain/repositories/get_order_repository/get_order_repository.dart';
-
 import 'package:digital_product/features/dashboard_user/orders/domain/usecases/create_order_use_case.dart';
 import 'package:digital_product/features/dashboard_user/orders/domain/usecases/get_file_url_usecase.dart';
 import 'package:digital_product/features/dashboard_user/orders/domain/usecases/get_orders_usecase.dart';
@@ -59,6 +75,34 @@ class ServiceLocator {
     if (!sl.isRegistered<SupabaseClient>()) {
       sl.registerLazySingleton<SupabaseClient>(() => Supabase.instance.client);
     }
+
+    // =========================================================
+    // AUTHENTICATION
+    // =========================================================
+
+    sl.registerLazySingleton<AuthRemoteDataSource>(
+      () => AuthRemoteDataSourceImpl(client: sl<SupabaseClient>()),
+    );
+
+    sl.registerLazySingleton<AuthEmailRemoteDataSource>(
+      () => AuthEmailRemoteDataSourceImpl(client: sl<SupabaseClient>()),
+    );
+
+    sl.registerLazySingleton<AuthPasswordRemoteDataSource>(
+      () => AuthPasswordRemoteDataSourceImpl(client: sl<SupabaseClient>()),
+    );
+
+    sl.registerLazySingleton<AuthRepository>(
+      () => AuthRepositoryImpl(
+        authRemoteDataSource: sl<AuthRemoteDataSource>(),
+        authEmailRemoteDataSource: sl<AuthEmailRemoteDataSource>(),
+        authPasswordRemoteDataSource: sl<AuthPasswordRemoteDataSource>(),
+      ),
+    );
+
+    sl.registerFactory<AuthCubit>(
+      () => AuthCubit(repository: sl<AuthRepository>()),
+    );
 
     // =========================================================
     // SERVICES
@@ -98,6 +142,36 @@ class ServiceLocator {
 
     sl.registerLazySingleton<UpdateServiceStatusUseCase>(
       () => UpdateServiceStatusUseCase(sl<OwnerServicesRepo>()),
+    );
+
+    // =========================================================
+    // WORKER INVITATIONS
+    // =========================================================
+
+    sl.registerLazySingleton<WorkerInvitationRemoteDataSource>(
+      () => WorkerInvitationRemoteDataSourceImpl(client: sl<SupabaseClient>()),
+    );
+
+    sl.registerLazySingleton<WorkerInvitationRepository>(
+      () => WorkerInvitationRepositoryImpl(
+        sl<WorkerInvitationRemoteDataSource>(),
+      ),
+    );
+
+    sl.registerLazySingleton<GetWorkerInvitationsUseCase>(
+      () => GetWorkerInvitationsUseCase(sl<WorkerInvitationRepository>()),
+    );
+
+    sl.registerLazySingleton<InviteWorkerUseCase>(
+      () => InviteWorkerUseCase(sl<WorkerInvitationRepository>()),
+    );
+
+    sl.registerFactory<GetWorkersCubit>(
+      () => GetWorkersCubit(sl<GetWorkerInvitationsUseCase>()),
+    );
+
+    sl.registerFactory<InviteWorkerCubit>(
+      () => InviteWorkerCubit(sl<InviteWorkerUseCase>()),
     );
 
     // =========================================================

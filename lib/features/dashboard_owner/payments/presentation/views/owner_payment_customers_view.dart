@@ -16,15 +16,15 @@ class OwnerPaymentCustomersView extends StatelessWidget {
         centerTitle: false,
         title: const Text('العملاء الذين دفعوا'),
       ),
-      body: SafeArea(
+      body: const SafeArea(
         top: false,
         child: CustomScrollView(
-          physics: const BouncingScrollPhysics(
+          physics: BouncingScrollPhysics(
             parent: AlwaysScrollableScrollPhysics(),
           ),
           slivers: [
             CustomerPaymentsSliver(customers: customerPayments),
-            const SliverToBoxAdapter(child: SizedBox(height: 32)),
+            SliverToBoxAdapter(child: SizedBox(height: 32)),
           ],
         ),
       ),
