@@ -13,15 +13,13 @@ class RoleNavigationResolver {
     UserRole.worker: (_) => const WorkerRootView(),
   };
 
-  static void resolve(BuildContext context, UserRole role) {
+  static WidgetBuilder? resolve(BuildContext context, UserRole role) {
     final builder = _routes[role];
 
     if (builder == null) {
       throw UnsupportedError('Unsupported role: $role');
     }
 
-    Navigator.of(
-      context,
-    ).pushAndRemoveUntil(MaterialPageRoute(builder: builder), (_) => false);
+    return _routes[role];
   }
 }

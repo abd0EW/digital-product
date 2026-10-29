@@ -16,7 +16,7 @@ abstract interface class AuthRepository {
     required UserRole role,
   });
 
-  Future<Either<AppFail, UserRole>> getUserRole();
+  Future<Either<AppFail, UserRole?>> getUserRole();
 
   Future<Either<AppFail, Unit>> logout();
 
@@ -27,5 +27,12 @@ abstract interface class AuthRepository {
   });
 
   Future<Either<AppFail, Unit>> updatePassword({required String newPassword});
+
+  Future<Either<AppFail, Unit>> setInvitedWorkerPassword({
+    required String password,
+  });
+
+  Future<Either<AppFail, String?>> getVerifiedAuthenticatedUserEmail();
+
   Future<Either<AppFail, bool>> checkEmailVerification();
 }

@@ -91,6 +91,28 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  @override
+  Future<Either<AppFail, Unit>> setInvitedWorkerPassword({
+    required String password,
+  }) {
+    return _handleAuthAction(
+      () => _authPasswordRemoteDataSource.setInvitedWorkerPassword(
+        password: password,
+      ),
+    );
+  }
+
+  @override
+  Future<Either<AppFail, String?>> getVerifiedAuthenticatedUserEmail() async {
+    try {
+      return Right(
+        await _authRemoteDataSource.getVerifiedAuthenticatedUserEmail(),
+      );
+    } on AppFail catch (exception) {
+      return Left(exception);
+    }
+  }
+
   Future<Either<AppFail, Unit>> _handleAuthAction(
     Future<void> Function() action,
   ) async {
@@ -104,9 +126,9 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<AppFail, UserRole>> getUserRole() async {
+  Future<Either<AppFail, UserRole?>> getUserRole() async {
     try {
-      final UserRole role = await _authRemoteDataSource.getUserRole();
+      final UserRole? role = await _authRemoteDataSource.getUserRole();
 
       return Right(role);
     } on AppFail catch (exception) {

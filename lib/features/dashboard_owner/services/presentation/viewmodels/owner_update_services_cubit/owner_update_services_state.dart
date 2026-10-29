@@ -39,15 +39,7 @@ final class OwnerUpdateServicesSuccess extends OwnerUpdateServicesState {
 }
 
 final class OwnerUpdateServicesFailure extends OwnerUpdateServicesState {
-  const OwnerUpdateServicesFailure({
-    required super.changedServices,
-    required super.savedServices,
-    required this.failureMessage,
-    required this.failedServiceIds,
-    required this.successfullySavedServiceIds,
-  });
+  const OwnerUpdateServicesFailure({this.failureMessage});
 
-  final String failureMessage;
-  final List<String> failedServiceIds;
-  final List<String> successfullySavedServiceIds;
+  final String? failureMessage;
 }

@@ -1,6 +1,6 @@
 import 'package:digital_product/core/constants/app_spacing.dart';
 import 'package:digital_product/core/widgets/app_fail_state_silver.dart';
-import 'package:digital_product/core/widgets/app_state_loading_silver.dart';
+import 'package:digital_product/core/widgets/app_loading_state_silver.dart';
 
 import 'package:digital_product/features/dashboard_owner/services/presentation/viewmodels/owner_get_services_cubit/owner_get_services_cubit.dart';
 import 'package:digital_product/features/dashboard_owner/services/presentation/widgets/owner_service_card.dart';
@@ -15,7 +15,7 @@ class OwnerServicesSection extends StatelessWidget {
     return BlocBuilder<OwnerGetServicesCubit, OwnerGetServicesState>(
       builder: (context, state) {
         if (state is OwnerGetServicesLoading && state.serviceModel.isEmpty) {
-          return const AppStateLoadingSilver();
+          return const AppLoadingStateSilver();
         }
 
         if (state is OwnerGetServicesFailure && state.serviceModel.isEmpty) {

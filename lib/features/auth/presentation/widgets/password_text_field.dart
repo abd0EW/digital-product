@@ -34,11 +34,11 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
         onPressed: _togglePasswordVisibility,
         icon: Icon(_isObscure ? Icons.visibility_off : Icons.visibility),
       ),
-      hintText: 'كلمة المرور',
+      hintText: widget.hintText.isEmpty ? 'كلمة المرور' : widget.hintText,
       controller: widget.controller,
       keyboardType: TextInputType.visiblePassword,
       textInputAction: TextInputAction.done,
-      validator: AppValidators.password,
+      validator: widget.validator ?? AppValidators.password,
       obscureText: _isObscure,
     );
   }

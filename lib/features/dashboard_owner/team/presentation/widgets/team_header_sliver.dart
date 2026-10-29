@@ -29,7 +29,7 @@ class TeamHeaderSliver extends StatelessWidget {
             const Expanded(child: AppText.title('الفريق')),
             FittedBox(
               child: AppButton(
-                title: isAddingAssistant ? 'إخفاء' : '+ إضافة مساعد',
+                title: isAddingAssistant ? 'إلغاء' : '+ إضافة مساعد',
                 onPressed: onAddAssistant,
                 backgroundColor: AppColors.navyPrimary,
                 foregroundColor: AppColors.whiteText,

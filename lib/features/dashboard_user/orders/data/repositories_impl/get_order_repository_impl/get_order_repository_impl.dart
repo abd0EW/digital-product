@@ -37,6 +37,27 @@ class GetOrderRepositoryImpl implements GetOrderRepository {
   }
 
   @override
+  Future<Either<OrderFailure, Unit>> assignWorker({
+    required String orderId,
+    required String workerId,
+  }) async {
+    try {
+      await _remoteDataSource.assignWorker(
+        orderId: orderId,
+        workerId: workerId,
+      );
+      return const Right(unit);
+    } catch (exception) {
+      return Left(
+        AssignWorkerFailure(
+          exception: exception,
+          message: exception.toString(),
+        ),
+      );
+    }
+  }
+
+  @override
   Future<Either<OrderFailure, OrderModel?>> getUserOrderById({
     required String orderId,
   }) async {

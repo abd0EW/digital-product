@@ -1,9 +1,10 @@
-import 'package:digital_product/core/di/service_locator.dart';
+import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/utils/role_navigation_resolver.dart';
 import 'package:digital_product/features/auth/domain/enums/user_role.dart';
-import 'package:digital_product/features/auth/presentation/viewmodels/auth_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/user_role/user_role_cubit.dart';
 import 'package:digital_product/features/auth/presentation/views/auth_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Root extends StatefulWidget {
@@ -14,82 +15,77 @@ class Root extends StatefulWidget {
 }
 
 class _RootState extends State<Root> {
-  bool _isChecking = true;
-  Object? _error;
+  bool _isInitializing = true;
+  UserRole? _currentUserRole;
 
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkUser();
-    });
+    _initializeUserSession();
   }
 
-  Future<void> _checkUser() async {
+  Future<void> _initializeUserSession() async {
     try {
-      final client = Supabase.instance.client;
-      final user = client.auth.currentUser;
+      final currentUser = Supabase.instance.client.auth.currentUser;
 
-      if (user == null) {
+      if (currentUser == null) {
         if (!mounted) return;
 
         setState(() {
-          _isChecking = false;
+          _currentUserRole = null;
+          _isInitializing = false;
         });
+
         return;
       }
 
-      final UserRole role = await ServiceLocator.sl<AuthCubit>()
+      final resolvedRole = await context
+          .read<UserRoleCubit>()
           .getCurrentUserRole();
 
       if (!mounted) return;
 
-      RoleNavigationResolver.resolve(context, role);
+      setState(() {
+        _currentUserRole = resolvedRole;
+        _isInitializing = false;
+      });
     } catch (error, stackTrace) {
-      debugPrint('Root initialization failed: $error');
+      debugPrint('Session initialization failed: $error');
       debugPrintStack(stackTrace: stackTrace);
 
       if (!mounted) return;
 
       setState(() {
-        _error = error;
-        _isChecking = false;
+        _currentUserRole = null;
+        _isInitializing = false;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isChecking) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
-    if (_error != null) {
-      return Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('حدث خطأ أثناء تحميل بيانات المستخدم'),
-              const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _isChecking = true;
-                    _error = null;
-                  });
-
-                  _checkUser();
-                },
-                child: const Text('إعادة المحاولة'),
-              ),
-            ],
+    if (_isInitializing) {
+      return const ColoredBox(
+        color: AppColors.appBackground,
+        child: Center(
+          child: CircularProgressIndicator(
+            color: AppColors.primaryButtonBackground,
           ),
         ),
       );
     }
 
-    return const AuthView();
+    final currentRole = _currentUserRole;
+
+    if (currentRole == null) {
+      return const AuthView();
+    }
+
+    final destinationBuilder = RoleNavigationResolver.resolve(
+      context,
+      currentRole,
+    );
+
+    return destinationBuilder?.call(context) ?? const AuthView();
   }
 }

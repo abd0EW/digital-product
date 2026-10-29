@@ -4,4 +4,6 @@ abstract interface class WorkerInvitationRemoteDataSource {
   Future<List<WorkerInvitationModel>> getWorkerInvitations();
 
   Future<void> inviteWorker({required String fullName, required String email});
+
+  Future<void> confirmWorkerAccount();
 }

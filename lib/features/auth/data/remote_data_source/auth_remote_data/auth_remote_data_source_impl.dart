@@ -4,7 +4,7 @@ import 'package:digital_product/features/auth/domain/failures/auth_fail.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  AuthRemoteDataSourceImpl({required SupabaseClient client}) : _client = client;
+  AuthRemoteDataSourceImpl({required this._client});
 
   final SupabaseClient _client;
 
@@ -41,7 +41,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<UserRole> getUserRole() async {
+  Future<UserRole?> getUserRole() async {
     final client = Supabase.instance.client;
 
     final userId = client.auth.currentUser!.id;
@@ -50,9 +50,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         .from('profiles')
         .select('role')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
+    if (response == null) {
+      return null;
+    }
 
     return UserRole.fromString(response['role'] as String);
+  }
+
+  @override
+  Future<String?> getVerifiedAuthenticatedUserEmail() async {
+    final user = _client.auth.currentUser;
+    if (user?.emailConfirmedAt == null) return null;
+
+    final email = user?.email?.trim();
+    return email == null || email.isEmpty ? null : email;
   }
 
   @override

@@ -1,5 +1,5 @@
 import 'package:digital_product/core/widgets/app_fail_state_silver.dart';
-import 'package:digital_product/core/widgets/app_state_loading_silver.dart';
+import 'package:digital_product/core/widgets/app_loading_state_silver.dart';
 import 'package:digital_product/features/dashboard_user/orders/presentation/widgets/get_order_file_success_silver.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -73,7 +73,7 @@ class _OrderAttachmentCardState extends State<OrderAttachmentCard> {
     return BlocBuilder<GetOrderFilesCubit, GetOrderFilesState>(
       builder: (context, state) {
         if (state is GetOrderFilesLoading || state is GetOrderFilesInitial) {
-          return const AppStateLoadingSilver();
+          return const AppLoadingStateSilver();
         }
 
         if (state is GetOrderFilesEmpty) {

@@ -11,17 +11,25 @@ import 'package:digital_product/features/auth/data/remote_data_source/auth_remot
 import 'package:digital_product/features/auth/data/remote_data_source/auth_remote_data/auth_remote_data_source_impl.dart';
 import 'package:digital_product/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:digital_product/features/auth/domain/repositories/auth_repository.dart';
-import 'package:digital_product/features/auth/presentation/viewmodels/auth_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/email_verification/email_verification_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/login/login_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/logout/logout_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/password/password_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/register/register_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/user_role/user_role_cubit.dart';
 import 'package:digital_product/features/dashboard_owner/services/data/datasources/owner_services_remote_data_source.dart';
 import 'package:digital_product/features/dashboard_owner/services/domain/usecase/get_services__owner_use_case.dart';
 import 'package:digital_product/features/dashboard_owner/team/data/data_remote_datasource/worker_invitation_remote_data_source.dart';
 import 'package:digital_product/features/dashboard_owner/team/data/data_remote_datasource/worker_invitation_remote_data_source_impl.dart';
 import 'package:digital_product/features/dashboard_owner/team/data/repositories/worker_invitation_repository_impl.dart';
 import 'package:digital_product/features/dashboard_owner/team/domain/repositories/worker_invitation_repository.dart';
+import 'package:digital_product/features/dashboard_owner/team/domain/usecases/confirm_worker_use_case.dart';
 import 'package:digital_product/features/dashboard_owner/team/domain/usecases/get_worker_invitations_use_case.dart';
 import 'package:digital_product/features/dashboard_owner/team/domain/usecases/invite_worker_use_case.dart';
+import 'package:digital_product/features/dashboard_owner/team/presentation/viewmodels/confirm_worker_invitation_cubit/confirm_worker_invitation_cubit.dart';
 import 'package:digital_product/features/dashboard_owner/team/presentation/viewmodels/invite_worker_cubit/invite_worker_cubit.dart';
-import 'package:digital_product/features/dashboard_owner/team/presentation/viewmodels/worker_invitations_cubit/get_workers_cubit.dart';
+import 'package:digital_product/features/dashboard_owner/team/presentation/viewmodels/get_worker_cubit/get_workers_cubit.dart';
+import 'package:digital_product/features/dashboard_owner/orders/presentation/viewmodels/assign_order_worker/assign_order_worker_cubit.dart';
 import 'package:digital_product/features/dashboard_user/notifications/data/remote_data_source/notification_remote_data_source.dart';
 import 'package:digital_product/features/dashboard_user/notifications/presentation/viewmodels/cubit/notification_cubit.dart';
 
@@ -100,8 +108,23 @@ class ServiceLocator {
       ),
     );
 
-    sl.registerFactory<AuthCubit>(
-      () => AuthCubit(repository: sl<AuthRepository>()),
+    sl.registerFactory<LoginCubit>(
+      () => LoginCubit(repository: sl<AuthRepository>()),
+    );
+    sl.registerFactory<RegisterCubit>(
+      () => RegisterCubit(repository: sl<AuthRepository>()),
+    );
+    sl.registerFactory<LogoutCubit>(
+      () => LogoutCubit(repository: sl<AuthRepository>()),
+    );
+    sl.registerFactory<UserRoleCubit>(
+      () => UserRoleCubit(repository: sl<AuthRepository>()),
+    );
+    sl.registerFactory<PasswordCubit>(
+      () => PasswordCubit(repository: sl<AuthRepository>()),
+    );
+    sl.registerFactory<EmailVerificationCubit>(
+      () => EmailVerificationCubit(repository: sl<AuthRepository>()),
     );
 
     // =========================================================
@@ -162,6 +185,12 @@ class ServiceLocator {
       () => GetWorkerInvitationsUseCase(sl<WorkerInvitationRepository>()),
     );
 
+    sl.registerLazySingleton<ConfirmWorkerInvitationUseCase>(
+      () => ConfirmWorkerInvitationUseCase(
+        workerInvitationRepository: sl<WorkerInvitationRepository>(),
+      ),
+    );
+
     sl.registerLazySingleton<InviteWorkerUseCase>(
       () => InviteWorkerUseCase(sl<WorkerInvitationRepository>()),
     );
@@ -172,6 +201,10 @@ class ServiceLocator {
 
     sl.registerFactory<InviteWorkerCubit>(
       () => InviteWorkerCubit(sl<InviteWorkerUseCase>()),
+    );
+
+    sl.registerFactory<ConfirmWorkerInvitationCubit>(
+      () => ConfirmWorkerInvitationCubit(sl<ConfirmWorkerInvitationUseCase>()),
     );
 
     // =========================================================
@@ -251,6 +284,10 @@ class ServiceLocator {
 
     sl.registerLazySingleton<GetOrdersUsecase>(
       () => GetOrdersUsecase(sl<GetOrderRepository>()),
+    );
+
+    sl.registerFactory<AssignOrderWorkerCubit>(
+      () => AssignOrderWorkerCubit(sl<GetOrdersUsecase>()),
     );
 
     sl.registerLazySingleton<GetFileUrlUsecase>(

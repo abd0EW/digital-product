@@ -96,7 +96,7 @@ class _AddAssistantFormState extends State<_AddAssistantForm> {
             AppTextField(
               controller: widget.nameController,
               label: 'الاسم الكامل',
-              hintText: 'أدخل الاسم الكامل',
+
               keyboardType: TextInputType.name,
               textInputAction: TextInputAction.next,
               validator: (value) =>
@@ -106,7 +106,7 @@ class _AddAssistantFormState extends State<_AddAssistantForm> {
             AppTextField(
               controller: widget.emailController,
               label: 'البريد الإلكتروني',
-              hintText: 'أدخل البريد الإلكتروني',
+
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.done,
               validator: AppValidators.email,
@@ -122,15 +122,6 @@ class _AddAssistantFormState extends State<_AddAssistantForm> {
                     onPressed: _submit,
                     backgroundColor: AppColors.success,
                     foregroundColor: AppColors.whiteText,
-                  ),
-                ),
-
-                Expanded(
-                  child: AppButton(
-                    title: 'إلغاء',
-                    onPressed: _submit,
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.red,
                   ),
                 ),
               ],

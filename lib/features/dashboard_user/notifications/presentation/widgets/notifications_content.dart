@@ -1,6 +1,6 @@
 import 'package:digital_product/core/utils/app_snackbar.dart';
 import 'package:digital_product/core/utils/show_before_payment_bottom_sheet.dart';
-import 'package:digital_product/core/widgets/app_state_loading_silver.dart';
+import 'package:digital_product/core/widgets/app_loading_state_silver.dart';
 import 'package:digital_product/features/dashboard_user/notifications/presentation/viewmodels/cubit/notification_cubit.dart';
 import 'package:digital_product/features/dashboard_user/notifications/presentation/widgets/notification_card.dart';
 import 'package:digital_product/features/dashboard_user/notifications/presentation/widgets/notifications_empty_view.dart';
@@ -19,7 +19,7 @@ class NotificationsContent extends StatelessWidget {
     final cubit = context.read<NotificationCubit>();
 
     if (state is NotificationLoading) {
-      return const AppStateLoadingSilver();
+      return const AppLoadingStateSilver();
     }
 
     if (state is NotificationFailure) {

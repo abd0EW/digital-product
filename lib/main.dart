@@ -1,8 +1,15 @@
 import 'package:app_links/app_links.dart';
 import 'package:digital_product/core/di/service_locator.dart';
-import 'package:digital_product/features/dashboard_owner/payments/presentation/views/owner_payments_view.dart';
+import 'package:digital_product/core/utils/deep_link/deep_link_routes.dart';
+import 'package:digital_product/core/utils/deep_link/handle_deep_link.dart';
+import 'package:digital_product/features/dashboard_owner/team/presentation/viewmodels/confirm_worker_invitation_cubit/confirm_worker_invitation_cubit.dart';
 import 'package:digital_product/root.dart';
-import 'package:digital_product/features/auth/presentation/viewmodels/auth_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/email_verification/email_verification_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/login/login_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/logout/logout_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/password/password_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/register/register_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/user_role/user_role_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:device_preview/device_preview.dart';
@@ -28,43 +35,67 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final GlobalKey<NavigatorState> _navigatorState = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+
+  late final HandleDeepLink _deepLinkHandler;
 
   @override
   void initState() {
     super.initState();
-    initDeeplink();
-  }
 
-  Future<void> initDeeplink() async {
-    final appLink = AppLinks();
+    _deepLinkHandler = HandleDeepLink(
+      appLinks: AppLinks(),
+      navigatorKey: _navigatorKey,
+      routes: DeepLinkRoutes.routes,
+    );
 
-    final initialLink = await appLink.getInitialLink();
-    if (initialLink != null) handleIncomingLink(initialLink);
+    _deepLinkHandler.initialize();
 
-    appLink.uriLinkStream.listen((uri) {
-      handleIncomingLink(uri);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      _deepLinkHandler.navigateToPendingLink();
     });
   }
 
-  void handleIncomingLink(Uri uri) {
-    if (uri.scheme == 'digitalproduct' && uri.host == 'invite_email') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const OwnerPaymentsView()),
-      );
-    }
+  @override
+  void dispose() {
+    _deepLinkHandler.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ServiceLocator.sl<AuthCubit>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<LoginCubit>(
+          create: (_) => ServiceLocator.sl<LoginCubit>(),
+        ),
+        BlocProvider<RegisterCubit>(
+          create: (_) => ServiceLocator.sl<RegisterCubit>(),
+        ),
+        BlocProvider<LogoutCubit>(
+          create: (_) => ServiceLocator.sl<LogoutCubit>(),
+        ),
+        BlocProvider<UserRoleCubit>(
+          create: (_) => ServiceLocator.sl<UserRoleCubit>(),
+        ),
+        BlocProvider<PasswordCubit>(
+          create: (_) => ServiceLocator.sl<PasswordCubit>(),
+        ),
+        BlocProvider<EmailVerificationCubit>(
+          create: (_) => ServiceLocator.sl<EmailVerificationCubit>(),
+        ),
+
+        BlocProvider(
+          create: (_) => ServiceLocator.sl<ConfirmWorkerInvitationCubit>(),
+        ),
+      ],
       child: MaterialApp(
-        key: _navigatorState,
+        navigatorKey: _navigatorKey,
         locale: const Locale('ar', 'SA'),
-        supportedLocales: [const Locale('ar', 'SA')],
-        localizationsDelegates: [
+        supportedLocales: const [Locale('ar', 'SA')],
+        localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,

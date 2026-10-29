@@ -7,11 +7,11 @@ class UpdateServiceStatusUseCase {
 
   Future<void> upddateSerivesActive({
     required String serviceId,
-    required bool isActive,
+    required bool isActiveService,
   }) async {
     await repository.updateServiceActive(
       serviceId: serviceId,
-      isActive: isActive,
+      isActive: isActiveService,
     );
   }
 }

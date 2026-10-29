@@ -24,6 +24,27 @@ class AuthPasswordRemoteDataSourceImpl implements AuthPasswordRemoteDataSource {
     );
   }
 
+  @override
+  Future<void> setInvitedWorkerPassword({required String password}) async {
+    final session = _client.auth.currentSession;
+    final user = _client.auth.currentUser;
+    if (session == null ||
+        user == null ||
+        user.id != session.user.id ||
+        session.expiresAt == null ||
+        session.isExpired ||
+        session.accessToken.trim().isEmpty) {
+      throw const AuthFail(
+        message: 'A valid authenticated session is required to set a password.',
+        code: 'session_not_found',
+      );
+    }
+
+    await _handleAuthRequest(
+      () => _client.auth.updateUser(UserAttributes(password: password)),
+    );
+  }
+
   Future<T> _handleAuthRequest<T>(Future<T> Function() request) async {
     try {
       return await request();

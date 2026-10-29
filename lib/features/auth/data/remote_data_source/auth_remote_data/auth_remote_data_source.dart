@@ -13,5 +13,7 @@ abstract interface class AuthRemoteDataSource {
 
   Future<void> signOut();
 
-  Future<UserRole> getUserRole();
+  Future<UserRole?> getUserRole();
+
+  Future<String?> getVerifiedAuthenticatedUserEmail();
 }

@@ -2,12 +2,11 @@ import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/constants/app_spacing.dart';
 import 'package:digital_product/core/di/service_locator.dart';
 import 'package:digital_product/core/utils/app_snackbar.dart';
-import 'package:digital_product/features/dashboard_owner/team/data/models/team_member_model.dart';
 import 'package:digital_product/features/dashboard_owner/team/presentation/viewmodels/invite_worker_cubit/invite_worker_cubit.dart';
-import 'package:digital_product/features/dashboard_owner/team/presentation/viewmodels/worker_invitations_cubit/get_workers_cubit.dart';
+import 'package:digital_product/features/dashboard_owner/team/presentation/viewmodels/get_worker_cubit/get_workers_cubit.dart';
 import 'package:digital_product/features/dashboard_owner/team/presentation/widgets/add_assistant_sliver.dart';
 import 'package:digital_product/features/dashboard_owner/team/presentation/widgets/team_header_sliver.dart';
-import 'package:digital_product/features/dashboard_owner/team/presentation/widgets/team_members_sliver.dart';
+import 'package:digital_product/features/dashboard_owner/team/presentation/widgets/team_member_bloc_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,6 +19,7 @@ class OwnerTeamView extends StatefulWidget {
 
 class _OwnerTeamViewState extends State<OwnerTeamView> {
   final TextEditingController _nameController = TextEditingController();
+
   final TextEditingController _emailController = TextEditingController();
   bool _isAddingAssistant = false;
   late final GetWorkersCubit _workerInvitationsCubit;
@@ -29,7 +29,7 @@ class _OwnerTeamViewState extends State<OwnerTeamView> {
   void initState() {
     super.initState();
     _workerInvitationsCubit = ServiceLocator.sl<GetWorkersCubit>()
-      ..loadWorkerInvitations();
+      ..getWorkers();
     _inviteWorkerCubit = ServiceLocator.sl<InviteWorkerCubit>();
   }
 
@@ -39,6 +39,7 @@ class _OwnerTeamViewState extends State<OwnerTeamView> {
     _emailController.dispose();
     _workerInvitationsCubit.close();
     _inviteWorkerCubit.close();
+
     super.dispose();
   }
 
@@ -65,9 +66,6 @@ class _OwnerTeamViewState extends State<OwnerTeamView> {
       child: BlocListener<InviteWorkerCubit, InviteWorkerState>(
         listener: (context, state) {
           if (state is InviteWorkerSuccess) {
-            _workerInvitationsCubit.loadWorkerInvitations();
-            _nameController.clear();
-            _emailController.clear();
             setState(() => _isAddingAssistant = false);
             AppSnackbar.success(context, message: "تم دعوه العامل بنجاح");
           } else if (state is InviteWorkerFailure) {
@@ -93,39 +91,9 @@ class _OwnerTeamViewState extends State<OwnerTeamView> {
                   onSubmit: _addAssistant,
                   onCancel: _toggleAssistantForm,
                 ),
-                BlocBuilder<GetWorkersCubit, GetWorkersState>(
-                  builder: (context, state) {
-                    if (state is GetWorkersStateLoading) {
-                      return const SliverToBoxAdapter(
-                        child: Center(child: CircularProgressIndicator()),
-                      );
-                    }
 
-                    if (state is GetWorkersStateFailure) {
-                      return SliverToBoxAdapter(
-                        child: Center(child: Text(state.message)),
-                      );
-                    }
+                const TeamMembersBlocBuilder(),
 
-                    if (state is GetWorkersStateSuccess) {
-                      final members = state.invitations
-                          .map(
-                            (invitation) => TeamMemberModel(
-                              name: invitation.fullName,
-                              email: invitation.email,
-                              role: 'عامل مدعو',
-                              initial: invitation.fullName.isEmpty
-                                  ? '؟'
-                                  : invitation.fullName[0],
-                            ),
-                          )
-                          .toList(growable: false);
-                      return TeamMembersSliver(members: members);
-                    }
-
-                    return const SliverToBoxAdapter(child: SizedBox.shrink());
-                  },
-                ),
                 const SliverToBoxAdapter(
                   child: SizedBox(height: AppSpacing.xl),
                 ),

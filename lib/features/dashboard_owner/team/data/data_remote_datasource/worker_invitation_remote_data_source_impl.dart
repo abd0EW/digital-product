@@ -17,7 +17,9 @@ class WorkerInvitationRemoteDataSourceImpl
         .from('worker_invitations')
         .select()
         .eq('invited_by', ownerProfileId)
-        .order('created_at', ascending: false);
+        .eq("status", "accepted")
+        .order('created_at', ascending: false)
+        .select();
 
     return response.map((row) => WorkerInvitationModel.fromJson(row)).toList();
   }
@@ -50,5 +52,26 @@ class WorkerInvitationRemoteDataSourceImpl
     }
 
     return profile['id'] as String;
+  }
+
+  @override
+  Future<void> confirmWorkerAccount() async {
+    final user = _client.auth.currentUser;
+
+    if (user == null) {
+      throw Exception('No authenticated user found');
+    }
+
+    final email = user.email;
+
+    if (email == null || email.isEmpty) {
+      throw Exception('Authenticated user email not found');
+    }
+
+    await _client
+        .from('worker_invitations')
+        .update({'status': 'accepted', 'accepted_user_id': user.id})
+        .eq('email', email)
+        .eq('status', 'pending');
   }
 }

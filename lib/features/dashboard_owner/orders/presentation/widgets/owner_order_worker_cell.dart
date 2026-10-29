@@ -17,7 +17,7 @@ class OwnerOrderWorkerCell extends StatelessWidget {
     final workerName = order.workerName?.trim();
     return SizedBox(
       width: 150,
-      child: AppText.body(
+      child: AppText.caption(
         workerName == null || workerName.isEmpty
             ? 'اسم العامل غير متاح'
             : workerName,

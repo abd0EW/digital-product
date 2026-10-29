@@ -6,6 +6,10 @@ import 'package:digital_product/features/dashboard_user/orders/domain/failures/o
 abstract class GetOrderRepository {
   Future<Either<OrderFailure, List<OrderModel>>> getUserOrders();
   Future<Either<OrderFailure, List<OrderModel>>> getAllOrders();
+  Future<Either<OrderFailure, Unit>> assignWorker({
+    required String orderId,
+    required String workerId,
+  });
   Future<Either<OrderFailure, OrderModel?>> getUserOrderById({
     required String orderId,
   });

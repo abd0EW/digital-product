@@ -111,4 +111,10 @@ class GetOrderCubit extends Cubit<GetOrderState> {
 
     await getOrders();
   }
+
+  Future<void> refreshOwnerOrders() async {
+    _hasLoadedOrders = false;
+
+    await getOwnerOrders();
+  }
 }

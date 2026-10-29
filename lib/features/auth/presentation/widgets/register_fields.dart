@@ -75,11 +75,7 @@ class RegisterFields extends StatelessWidget {
 
         const Gap(5),
 
-        PasswordTextField(
-          controller: passwordController,
-          validator: (value) {},
-          hintText: '',
-        ),
+        PasswordTextField(controller: passwordController, hintText: ''),
 
         const Gap(AppSpacing.md),
 

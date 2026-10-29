@@ -1,3 +1,4 @@
+import 'package:digital_product/features/dashboard_owner/team/domain/failures/worker_invitation_error_handler.dart';
 import 'package:digital_product/features/dashboard_owner/team/domain/usecases/invite_worker_use_case.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -28,7 +29,11 @@ class InviteWorkerCubit extends Cubit<InviteWorkerState> {
       if (isClosed) return;
 
       result.fold(
-        (failure) => emit(InviteWorkerFailure(message: failure.userMessage)),
+        (failure) => emit(
+          InviteWorkerFailure(
+            message: WorkerInvitationErrorHandler.handle(failure),
+          ),
+        ),
 
         (_) =>
             emit(const InviteWorkerSuccess(message: 'تم إرسال الدعوة بنجاح.')),

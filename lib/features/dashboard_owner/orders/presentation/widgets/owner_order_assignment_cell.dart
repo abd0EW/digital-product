@@ -1,9 +1,13 @@
 import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/constants/app_spacing.dart';
+import 'package:digital_product/core/utils/app_snackbar.dart';
 import 'package:digital_product/core/widgets/app_text.dart';
 import 'package:digital_product/features/dashboard_owner/orders/presentation/widgets/worker_assignment_bottom_sheet.dart';
 import 'package:digital_product/features/dashboard_user/orders/data/models/order_model.dart';
+import 'package:digital_product/features/dashboard_user/orders/presentation/viewmodels/get_order/get_order_cubit.dart';
+import 'package:digital_product/features/dashboard_user/orders/presentation/viewmodels/get_order/get_order_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class OwnerOrderAssignmentCell extends StatelessWidget {
   const OwnerOrderAssignmentCell({required this.order, super.key});
@@ -12,19 +16,31 @@ class OwnerOrderAssignmentCell extends StatelessWidget {
 
   bool get _isInProgress => order.status.trim().toLowerCase() == 'in_progress';
 
-  Future<void> _showAssignmentSheet(BuildContext context) {
-    return WorkerAssignmentBottomSheet.show(
+  Future<void> _showAssignmentSheet(BuildContext context) async {
+    final orderId = order.id;
+    if (orderId == null) return;
+
+    final worker = await WorkerAssignmentBottomSheet.show(
       context,
-      onWorkerSelected: (worker) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'تم اختيار ${worker.name} للتجربة فقط؛ لم يتم حفظ التعيين.',
-            ),
-          ),
-        );
-      },
+      orderId: orderId,
     );
+
+    if (worker == null || !context.mounted) return;
+
+    await context.read<GetOrderCubit>().refreshOwnerOrders();
+    if (!context.mounted) return;
+
+    AppSnackbar.success(
+      context,
+      message: 'تم تعيين ${worker.fullName} للطلب بنجاح',
+    );
+
+    if (context.read<GetOrderCubit>().state is GetOrderFailure) {
+      AppSnackbar.error(
+        context,
+        message: 'تم التعيين، لكن تعذر تحديث قائمة الطلبات.',
+      );
+    }
   }
 
   @override
@@ -33,7 +49,7 @@ class OwnerOrderAssignmentCell extends StatelessWidget {
       return const AppText.body('—');
     }
 
-    if (order.workerId != null) {
+    if (order.workerId != null || order.id == null) {
       return const AppText.body('—');
     }
 

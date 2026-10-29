@@ -3,8 +3,8 @@ import 'package:digital_product/features/dashboard_owner/services/presentation/v
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class OwnerSericesCardSwitch extends StatelessWidget {
-  const OwnerSericesCardSwitch({
+class OwnerServicesCardSwitch extends StatelessWidget {
+  const OwnerServicesCardSwitch({
     super.key,
     required this.id,
     required this.isEnabled,
@@ -20,18 +20,24 @@ class OwnerSericesCardSwitch extends StatelessWidget {
       OwnerUpdateServicesState,
       ({bool isSaving, bool value})
     >(
-      selector: (state) => (
-        value: state.changedServices[id] ?? state.savedServices[id] ?? isEnabled,
-        isSaving: state is OwnerUpdateServicesSaving,
-      ),
+      selector: (state) {
+        return (
+          value:
+              state.changedServices[id] ?? state.savedServices[id] ?? isEnabled,
+          isSaving: state is OwnerUpdateServicesSaving,
+        );
+      },
       builder: (context, switchState) {
         return Switch(
           value: switchState.value,
           onChanged: switchState.isSaving
               ? null
-              : (value) => context
-                    .read<OwnerUpdateServicesCubit>()
-                    .changeServiceStatus(id: id, isActive: value),
+              : (value) {
+                  context.read<OwnerUpdateServicesCubit>().changeServiceStatus(
+                    id: id,
+                    isActive: value,
+                  );
+                },
           activeTrackColor: AppColors.success,
           inactiveThumbColor: AppColors.cardBackground,
           inactiveTrackColor: AppColors.cardBorder,
