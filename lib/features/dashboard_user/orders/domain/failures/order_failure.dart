@@ -13,6 +13,13 @@ class CreateOrderFail extends OrderFailure {
     : super(message: message);
 }
 
+class AssignWorkerFailure extends OrderFailure {
+  final Object exception;
+
+  const AssignWorkerFailure({required String message, required this.exception})
+    : super(message: message);
+}
+
 class UploadFileFailure extends OrderFailure {
   final Object exception;
 

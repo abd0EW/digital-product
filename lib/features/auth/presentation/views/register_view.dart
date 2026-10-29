@@ -1,8 +1,7 @@
 import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/features/auth/domain/enums/user_role.dart';
-import 'package:digital_product/features/auth/presentation/viewmodels/auth_cubit.dart';
-import 'package:digital_product/features/auth/presentation/viewmodels/auth_state.dart';
-import 'package:digital_product/features/auth/presentation/widgets/acount_type.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/register/register_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/register/register_state.dart';
 import 'package:digital_product/features/auth/presentation/widgets/register_content.dart';
 import 'package:digital_product/features/auth/presentation/widgets/responsive_auth_layout.dart';
 import 'package:flutter/material.dart';
@@ -26,9 +25,8 @@ class _RegisterViewState extends State<RegisterView> {
       TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  final ValueNotifier<AcountType> _accountType = ValueNotifier<AcountType>(
-    AcountType.user,
+  final ValueNotifier<UserRole> userRole = ValueNotifier<UserRole>(
+    UserRole.user,
   );
 
   @override
@@ -38,8 +36,7 @@ class _RegisterViewState extends State<RegisterView> {
     _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
-    _accountType.dispose();
-
+    userRole.dispose();
     super.dispose();
   }
 
@@ -50,29 +47,21 @@ class _RegisterViewState extends State<RegisterView> {
       return;
     }
 
-    context.read<AuthCubit>().register(
+    context.read<RegisterCubit>().register(
       fullName: _nameController.text.trim(),
       email: _emailController.text.trim(),
       phone: _phoneController.text.trim(),
       password: _passwordController.text,
-      role: _getUserRole(),
+      role: _getUserRole(userRole.value),
     );
   }
 
-  UserRole _getUserRole() {
-    switch (_accountType.value) {
-      case AcountType.user:
-        return UserRole.user;
-
-      case AcountType.owner:
-        return UserRole.owner;
-      case AcountType.worker:
-        return UserRole.worker;
-    }
+  UserRole _getUserRole(UserRole userRole) {
+    return UserRole.fromString(userRole.name);
   }
 
-  void _changeAccountType(AcountType accountType) {
-    _accountType.value = accountType;
+  void _changeAccountType(UserRole userRole) {
+    userRole = UserRole.fromString(userRole.value);
   }
 
   @override
@@ -83,9 +72,7 @@ class _RegisterViewState extends State<RegisterView> {
       body: SafeArea(
         child: GestureDetector(
           behavior: HitTestBehavior.translucent,
-          onTap: () {
-            FocusManager.instance.primaryFocus?.unfocus();
-          },
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: CustomScrollView(
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             slivers: [
@@ -94,7 +81,7 @@ class _RegisterViewState extends State<RegisterView> {
                   centerVertically: false,
                   child: Form(
                     key: _formKey,
-                    child: BlocBuilder<AuthCubit, AuthState>(
+                    child: BlocBuilder<RegisterCubit, RegisterState>(
                       builder: (context, state) {
                         return RegisterContent(
                           nameController: _nameController,
@@ -102,11 +89,11 @@ class _RegisterViewState extends State<RegisterView> {
                           phoneController: _phoneController,
                           passwordController: _passwordController,
                           confirmPasswordController: _confirmPasswordController,
-                          accountType: _accountType,
+                          userRole: userRole,
                           onAccountTypeChanged: _changeAccountType,
                           onRegisterPressed: _validateForm,
                           goToLogin: widget.onLoginPressed,
-                          isLoading: state is AuthLoading,
+                          isLoading: state is RegisterLoading,
                         );
                       },
                     ),

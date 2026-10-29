@@ -1,7 +1,6 @@
 import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/constants/app_radius.dart';
-import 'package:digital_product/features/dashboard_user/notifications/presentation/views/notifications_view.dart';
-import 'package:digital_product/features/dashboard_user/profile/presentation/views/profile_view.dart';
+
 import 'package:digital_product/features/dashboard_worker/dashboard/presentation/views/worker_dashboard_view.dart';
 import 'package:digital_product/features/dashboard_worker/orders/presentation/views/worker_orders_view.dart';
 import 'package:flutter/material.dart';

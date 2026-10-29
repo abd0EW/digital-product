@@ -39,11 +39,7 @@ class LoginFields extends StatelessWidget {
 
         const Gap(AppSpacing.xs),
 
-        PasswordTextField(
-          controller: passwordController,
-          validator: (value) {},
-          hintText: '',
-        ),
+        PasswordTextField(controller: passwordController, hintText: ''),
       ],
     );
   }

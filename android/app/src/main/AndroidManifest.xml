@@ -26,14 +26,12 @@
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
                     android:scheme="digitalproduct"
-                  
-                    android:host="verify-email" />
+                    android:host="invite_email" />
             </intent-filter>
 
         </activity>

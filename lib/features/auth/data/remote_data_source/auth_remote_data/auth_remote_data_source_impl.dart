@@ -1,0 +1,84 @@
+import 'package:digital_product/features/auth/data/remote_data_source/auth_remote_data/auth_remote_data_source.dart';
+import 'package:digital_product/features/auth/domain/enums/user_role.dart';
+import 'package:digital_product/features/auth/domain/failures/auth_fail.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
+  AuthRemoteDataSourceImpl({required this._client});
+
+  final SupabaseClient _client;
+
+  @override
+  Future<void> signUp({
+    required String fullName,
+    required String email,
+    required String phone,
+    required String password,
+    required UserRole role,
+  }) async {
+    await _handleAuthRequest(
+      () => _client.auth.signUp(
+        email: email.trim(),
+        password: password,
+        emailRedirectTo: 'http://localhost:50117/verify-email',
+        data: {
+          'full_name': fullName.trim(),
+          'phone': phone.trim(),
+          'role': role.value,
+        },
+      ),
+    );
+  }
+
+  @override
+  Future<void> signIn({required String email, required String password}) async {
+    await _handleAuthRequest(
+      () => _client.auth.signInWithPassword(
+        email: email.trim(),
+        password: password,
+      ),
+    );
+  }
+
+  @override
+  Future<UserRole?> getUserRole() async {
+    final client = Supabase.instance.client;
+
+    final userId = client.auth.currentUser!.id;
+
+    final response = await client
+        .from('profiles')
+        .select('role')
+        .eq('id', userId)
+        .maybeSingle();
+    if (response == null) {
+      return null;
+    }
+
+    return UserRole.fromString(response['role'] as String);
+  }
+
+  @override
+  Future<String?> getVerifiedAuthenticatedUserEmail() async {
+    final user = _client.auth.currentUser;
+    if (user?.emailConfirmedAt == null) return null;
+
+    final email = user?.email?.trim();
+    return email == null || email.isEmpty ? null : email;
+  }
+
+  @override
+  Future<void> signOut() async {
+    await _handleAuthRequest(() => _client.auth.signOut());
+  }
+
+  Future<T> _handleAuthRequest<T>(Future<T> Function() request) async {
+    try {
+      return await request();
+    } on AuthApiException catch (e) {
+      throw AuthFail(message: e.message, code: e.code);
+    } catch (e) {
+      throw AuthFail(message: e.toString());
+    }
+  }
+}

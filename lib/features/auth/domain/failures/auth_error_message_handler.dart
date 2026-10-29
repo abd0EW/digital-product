@@ -22,6 +22,9 @@ class AuthErrorMessageHandler {
 
       case 'over_email_send_rate_limit':
         return 'تم إرسال محاولات كثيرة، حاول مرة أخرى لاحقًا.';
+
+      case 'session_not_found':
+        return 'لا توجد جلسة مصادقة صالحة. افتح رابط الدعوة مرة أخرى.';
     }
 
     if (message.contains('invalid login credentials')) {

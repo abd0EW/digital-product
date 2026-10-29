@@ -18,12 +18,11 @@ class OwnerServicesView extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => OwnerUpdateServicesCubit(ServiceLocator.sl()),
-        ),
-
-        BlocProvider(
           create: (_) =>
               OwnerGetServicesCubit(ServiceLocator.sl())..getServices(),
+        ),
+        BlocProvider(
+          create: (_) => OwnerUpdateServicesCubit(ServiceLocator.sl()),
         ),
       ],
       child: MultiBlocListener(
@@ -31,9 +30,9 @@ class OwnerServicesView extends StatelessWidget {
           BlocListener<OwnerGetServicesCubit, OwnerGetServicesState>(
             listener: (context, state) {
               if (state is OwnerGetServicesSuccess) {
-                context
-                    .read<OwnerUpdateServicesCubit>()
-                    .initializeOriginalStatuses(state.serviceModel);
+                context.read<OwnerUpdateServicesCubit>().initServices(
+                  state.serviceModel,
+                );
               } else if (state is OwnerGetServicesFailure &&
                   state.serviceModel.isNotEmpty) {
                 AppSnackbar.error(
@@ -43,74 +42,41 @@ class OwnerServicesView extends StatelessWidget {
               }
             },
           ),
-
-          BlocListener<OwnerUpdateServicesCubit, OwnerUpdateServicesState>(
-            listener: (context, state) {
-              if (state is OwnerUpdateServicesSuccess) {
-                AppSnackbar.success(context, message: 'تم حفظ التعديلات بنجاح');
-                if (state.successfullySavedServiceIds.isNotEmpty) {
-                  context.read<OwnerGetServicesCubit>().getServices();
-                }
-              } else if (state is OwnerUpdateServicesFailure) {
-                AppSnackbar.error(context, message: state.failureMessage);
-                if (state.successfullySavedServiceIds.isNotEmpty) {
-                  context.read<OwnerGetServicesCubit>().getServices();
-                }
-              }
-            },
-          ),
         ],
-        child: Scaffold(
-          backgroundColor: AppColors.appBackground,
-          body: const SafeArea(
-            child: CustomScrollView(
-              physics: BouncingScrollPhysics(
-                parent: AlwaysScrollableScrollPhysics(),
-              ),
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      AppSpacing.md,
-                      AppSpacing.lg,
-                      AppSpacing.md,
-                      AppSpacing.md,
-                    ),
-                    child: AppText.title(
-                      'إدارة الخدمات',
-                      textAlign: TextAlign.right,
-                    ),
+        child: Builder(
+          builder: (context) {
+            return Scaffold(
+              backgroundColor: AppColors.appBackground,
+              body: const SafeArea(
+                child: CustomScrollView(
+                  physics: BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics(),
                   ),
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          AppSpacing.md,
+                          AppSpacing.lg,
+                          AppSpacing.md,
+                          AppSpacing.md,
+                        ),
+                        child: AppText.title(
+                          'إدارة الخدمات',
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                    ),
+                    OwnerServicesSection(),
+                  ],
                 ),
-                OwnerServicesSection(),
-              ],
-            ),
-          ),
-          bottomSheet:
-              BlocSelector<
-                OwnerUpdateServicesCubit,
-                OwnerUpdateServicesState,
-                ({bool hasPendingChanges, bool isSaving})
-              >(
-                selector: (state) => (
-                  hasPendingChanges: state.changedServices.isNotEmpty,
-                  isSaving: state is OwnerUpdateServicesSaving,
-                ),
-                builder: (context, buttonState) {
-                  if (!buttonState.hasPendingChanges) {
-                    return const SizedBox.shrink();
-                  }
-
-                  return AppBottomSheetBtn(
-                    title: 'حفظ التعديلات',
-                    isLoading: buttonState.isSaving,
-                    disabled: buttonState.isSaving,
-                    onPressed: context
-                        .read<OwnerUpdateServicesCubit>()
-                        .saveChanges,
-                  );
-                },
               ),
+              bottomSheet: AppBottomSheetBtn(
+                title: 'حفظ التعديلات',
+                onPressed: context.read<OwnerUpdateServicesCubit>().saveChanges,
+              ),
+            );
+          },
         ),
       ),
     );

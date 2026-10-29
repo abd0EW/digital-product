@@ -28,6 +28,8 @@ class OrderModel {
   final DateTime? updatedAt;
 
   final ServiceModel? service;
+  final String? workerName;
+
   const OrderModel({
     this.id,
     this.orderNumber,
@@ -49,6 +51,7 @@ class OrderModel {
     this.completedAt,
     this.createdAt,
     this.updatedAt,
+    this.workerName,
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
@@ -56,6 +59,7 @@ class OrderModel {
       service: json["service"] != null
           ? ServiceModel.fromJson(Map<String, dynamic>.from(json["service"]))
           : null,
+      workerName: json['worker_name'] as String?,
       id: json['id'] as String?,
       orderNumber: json['order_number'] != null
           ? (json['order_number'] as num).toInt()

@@ -1,9 +1,8 @@
 import 'package:digital_product/core/constants/app_spacing.dart';
+import 'package:digital_product/features/auth/domain/enums/user_role.dart';
 import 'package:digital_product/features/auth/presentation/widgets/acount_type_item.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-enum AcountType { user, owner, worker }
 
 class AccountTypeSelector extends StatelessWidget {
   const AccountTypeSelector({
@@ -12,12 +11,12 @@ class AccountTypeSelector extends StatelessWidget {
     required this.onChanged,
   });
 
-  final ValueListenable<AcountType> valueListenable;
-  final ValueChanged<AcountType> onChanged;
+  final ValueListenable<UserRole> valueListenable;
+  final ValueChanged<UserRole> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<AcountType>(
+    return ValueListenableBuilder<UserRole>(
       valueListenable: valueListenable,
       builder: (context, value, child) {
         return Row(
@@ -27,9 +26,9 @@ class AccountTypeSelector extends StatelessWidget {
               child: AccountTypeItem(
                 title: 'عميل',
                 icon: Icons.person,
-                isSelected: value == AcountType.user,
+                isSelected: value == UserRole.user,
                 onTap: () {
-                  onChanged(AcountType.user);
+                  onChanged(UserRole.user);
                 },
               ),
             ),
@@ -38,9 +37,9 @@ class AccountTypeSelector extends StatelessWidget {
               child: AccountTypeItem(
                 title: 'مزود خدمة',
                 icon: Icons.business_outlined,
-                isSelected: value == AcountType.owner,
+                isSelected: value == UserRole.owner,
                 onTap: () {
-                  onChanged(AcountType.owner);
+                  onChanged(UserRole.owner);
                 },
               ),
             ),

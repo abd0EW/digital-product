@@ -24,8 +24,6 @@ class OwnerGetServicesCubit extends Cubit<OwnerGetServicesState> {
 
     response.fold(
       (failure) {
-        print("==========================");
-        print(failure);
         emit(
           OwnerGetServicesFailure(
             failureMessage: failure.toString(),

@@ -2,6 +2,7 @@ import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/constants/app_spacing.dart';
 import 'package:digital_product/core/widgets/app_button.dart';
 import 'package:digital_product/core/widgets/app_text.dart';
+import 'package:digital_product/features/auth/domain/enums/user_role.dart';
 import 'package:digital_product/features/auth/presentation/views/auth_view.dart';
 import 'package:digital_product/features/auth/presentation/widgets/auth_header.dart';
 import 'package:flutter/material.dart';

@@ -1,6 +1,8 @@
 import 'package:digital_product/core/constants/app_colors.dart';
 import 'package:digital_product/core/constants/app_spacing.dart';
+
 import 'package:digital_product/core/widgets/app_text.dart';
+import 'package:digital_product/features/auth/domain/enums/user_role.dart';
 import 'package:digital_product/features/auth/presentation/widgets/acount_type.dart';
 import 'package:digital_product/features/auth/presentation/widgets/auth_header.dart';
 import 'package:digital_product/features/auth/presentation/widgets/register_actions_section.dart';
@@ -16,9 +18,9 @@ class RegisterContent extends StatelessWidget {
   final TextEditingController passwordController;
   final TextEditingController confirmPasswordController;
 
-  final ValueListenable<AcountType> accountType;
+  final ValueListenable<UserRole> userRole;
   final VoidCallback goToLogin;
-  final ValueChanged<AcountType> onAccountTypeChanged;
+  final ValueChanged<UserRole> onAccountTypeChanged;
   final VoidCallback onRegisterPressed;
   final bool isLoading;
 
@@ -29,7 +31,7 @@ class RegisterContent extends StatelessWidget {
     required this.phoneController,
     required this.passwordController,
     required this.confirmPasswordController,
-    required this.accountType,
+    required this.userRole,
     required this.onAccountTypeChanged,
     required this.onRegisterPressed,
     required this.goToLogin,
@@ -55,7 +57,7 @@ class RegisterContent extends StatelessWidget {
         const Gap(AppSpacing.sm),
 
         AccountTypeSelector(
-          valueListenable: accountType,
+          valueListenable: userRole,
           onChanged: onAccountTypeChanged,
         ),
 

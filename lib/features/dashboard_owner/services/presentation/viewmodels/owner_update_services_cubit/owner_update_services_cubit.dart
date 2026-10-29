@@ -13,20 +13,10 @@ class OwnerUpdateServicesCubit extends Cubit<OwnerUpdateServicesState> {
   final Map<String, bool> _changedServices = {};
   final Map<String, bool> _savedServices = {};
 
-  void initializeOriginalStatuses(List<ServiceModel> services) {
+  void initServices(List<ServiceModel> services) {
     _originalStatuses
       ..clear()
-      ..addEntries(services.map((service) => MapEntry(service.id, service.isActive)));
-
-    _changedServices.removeWhere(
-      (id, status) =>
-          _originalStatuses.containsKey(id) && _originalStatuses[id] == status,
-    );
-    _savedServices.removeWhere(
-      (id, status) =>
-          _originalStatuses.containsKey(id) && _originalStatuses[id] == status,
-    );
-    _emitChanges();
+      ..addAll({for (final service in services) service.id: service.isActive});
   }
 
   void changeServiceStatus({required String id, required bool isActive}) {
@@ -45,61 +35,30 @@ class OwnerUpdateServicesCubit extends Cubit<OwnerUpdateServicesState> {
   }
 
   Future<void> saveChanges() async {
-    if (state is OwnerUpdateServicesSaving || _changedServices.isEmpty) return;
+    try {
+      if (state is OwnerUpdateServicesSaving || _changedServices.isEmpty) {
+        return;
+      }
 
-    final changes = Map<String, bool>.from(_changedServices);
-    final successfullySavedServiceIds = <String>[];
-    final failedServiceIds = <String>[];
-
-    emit(
-      OwnerUpdateServicesSaving(
-        changedServices: Map.unmodifiable(_changedServices),
-        savedServices: Map.unmodifiable(_savedServices),
-      ),
-    );
-
-    for (final entry in changes.entries) {
-      try {
+      final changes = Map<String, bool>.from(_changedServices);
+      for (final entry in changes.entries) {
         await _updateServiceStatusUseCase.upddateSerivesActive(
           serviceId: entry.key,
-          isActive: entry.value,
+          isActiveService: entry.value,
         );
-
-        if (isClosed) return;
-
-        successfullySavedServiceIds.add(entry.key);
         _originalStatuses[entry.key] = entry.value;
+        _changedServices.remove(entry.key);
         _savedServices[entry.key] = entry.value;
-        if (_changedServices[entry.key] == entry.value) {
-          _changedServices.remove(entry.key);
-        }
-      } on Exception {
-        if (isClosed) return;
-        failedServiceIds.add(entry.key);
       }
-    }
-
-    if (isClosed) return;
-
-    final changedServices = Map<String, bool>.unmodifiable(_changedServices);
-    if (failedServiceIds.isEmpty) {
+      if (isClosed) return;
       emit(
-        OwnerUpdateServicesSuccess(
-          changedServices: changedServices,
+        OwnerUpdateServicesSaving(
+          changedServices: changes,
           savedServices: Map.unmodifiable(_savedServices),
-          successfullySavedServiceIds: successfullySavedServiceIds,
         ),
       );
-    } else {
-      emit(
-        OwnerUpdateServicesFailure(
-          changedServices: changedServices,
-          savedServices: Map.unmodifiable(_savedServices),
-          failureMessage: 'تعذر حفظ بعض التعديلات. تحقق من الاتصال وحاول مرة أخرى.',
-          failedServiceIds: failedServiceIds,
-          successfullySavedServiceIds: successfullySavedServiceIds,
-        ),
-      );
+    } catch (error) {
+      emit(OwnerUpdateServicesFailure(failureMessage: error.toString()));
     }
   }
 

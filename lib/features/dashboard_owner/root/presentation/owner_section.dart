@@ -1,1 +1,1 @@
-enum OwnerSection { orders, services, team, payments, settings }
+enum OwnerSection { orders, services, team, payments }

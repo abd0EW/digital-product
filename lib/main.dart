@@ -1,8 +1,15 @@
+import 'package:app_links/app_links.dart';
 import 'package:digital_product/core/di/service_locator.dart';
-import 'package:digital_product/features/auth/data/remote_data_source/auth_remote_data_source_impl.dart';
+import 'package:digital_product/core/utils/deep_link/deep_link_routes.dart';
+import 'package:digital_product/core/utils/deep_link/handle_deep_link.dart';
+import 'package:digital_product/features/dashboard_owner/team/presentation/viewmodels/confirm_worker_invitation_cubit/confirm_worker_invitation_cubit.dart';
 import 'package:digital_product/root.dart';
-import 'package:digital_product/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:digital_product/features/auth/presentation/viewmodels/auth_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/email_verification/email_verification_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/login/login_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/logout/logout_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/password/password_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/register/register_cubit.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/user_role/user_role_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:device_preview/device_preview.dart';
@@ -20,35 +27,82 @@ Future<void> main() async {
   runApp(DevicePreview(enabled: true, builder: (context) => const MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+
+  late final HandleDeepLink _deepLinkHandler;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _deepLinkHandler = HandleDeepLink(
+      appLinks: AppLinks(),
+      navigatorKey: _navigatorKey,
+      routes: DeepLinkRoutes.routes,
+    );
+
+    _deepLinkHandler.initialize();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      _deepLinkHandler.navigateToPendingLink();
+    });
+  }
+
+  @override
+  void dispose() {
+    _deepLinkHandler.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => AuthCubit(
-        AuthRepositoryImpl(
-          authRemoteDataSource: AuthRemoteDataSourceImpl(
-            client: Supabase.instance.client,
-          ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<LoginCubit>(
+          create: (_) => ServiceLocator.sl<LoginCubit>(),
         ),
-        repository: AuthRepositoryImpl(
-          authRemoteDataSource: AuthRemoteDataSourceImpl(
-            client: Supabase.instance.client,
-          ),
+        BlocProvider<RegisterCubit>(
+          create: (_) => ServiceLocator.sl<RegisterCubit>(),
         ),
-      ),
-      child: const MaterialApp(
-        locale: Locale('ar', 'SA'),
-        supportedLocales: [Locale('ar', 'SA')],
-        localizationsDelegates: [
+        BlocProvider<LogoutCubit>(
+          create: (_) => ServiceLocator.sl<LogoutCubit>(),
+        ),
+        BlocProvider<UserRoleCubit>(
+          create: (_) => ServiceLocator.sl<UserRoleCubit>(),
+        ),
+        BlocProvider<PasswordCubit>(
+          create: (_) => ServiceLocator.sl<PasswordCubit>(),
+        ),
+        BlocProvider<EmailVerificationCubit>(
+          create: (_) => ServiceLocator.sl<EmailVerificationCubit>(),
+        ),
+
+        BlocProvider(
+          create: (_) => ServiceLocator.sl<ConfirmWorkerInvitationCubit>(),
+        ),
+      ],
+      child: MaterialApp(
+        navigatorKey: _navigatorKey,
+        locale: const Locale('ar', 'SA'),
+        supportedLocales: const [Locale('ar', 'SA')],
+        localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
         debugShowCheckedModeBanner: false,
         title: 'Digital Product',
-        home: Root(),
+        home: const Root(),
       ),
     );
   }

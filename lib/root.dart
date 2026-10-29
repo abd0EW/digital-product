@@ -1,188 +1,91 @@
 import 'package:digital_product/core/constants/app_colors.dart';
-import 'package:digital_product/core/constants/app_radius.dart';
+import 'package:digital_product/core/utils/role_navigation_resolver.dart';
+import 'package:digital_product/features/auth/domain/enums/user_role.dart';
+import 'package:digital_product/features/auth/presentation/viewmodels/user_role/user_role_cubit.dart';
 import 'package:digital_product/features/auth/presentation/views/auth_view.dart';
-import 'package:digital_product/features/dashboard_user/notifications/presentation/views/notifications_view.dart';
-import 'package:digital_product/features/dashboard_user/orders/presentation/views/orders_view.dart';
-import 'package:digital_product/features/dashboard_user/profile/presentation/views/profile_view.dart';
-import 'package:digital_product/features/dashboard_user/services/presentation/views/services_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class Root extends StatelessWidget {
+class Root extends StatefulWidget {
   const Root({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const AuthView();
-  }
+  State<Root> createState() => _RootState();
 }
 
-class UserRootView extends StatefulWidget {
-  const UserRootView({super.key});
-
-  @override
-  State<UserRootView> createState() => _UserRootViewState();
-}
-
-class _UserRootViewState extends State<UserRootView> {
-  int currentIndex = 0;
-
-  late final PageController _pageController;
-
-  static const List<Widget> _pages = [
-    ServicesView(),
-    OrdersView(),
-    NotificationsView(),
-    ProfileView(),
-  ];
+class _RootState extends State<Root> {
+  bool _isInitializing = true;
+  UserRole? _currentUserRole;
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
+    _initializeUserSession();
   }
 
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
+  Future<void> _initializeUserSession() async {
+    try {
+      final currentUser = Supabase.instance.client.auth.currentUser;
 
-  void _changePage(int index) {
-    if (currentIndex == index) return;
+      if (currentUser == null) {
+        if (!mounted) return;
 
-    setState(() {
-      currentIndex = index;
-    });
+        setState(() {
+          _currentUserRole = null;
+          _isInitializing = false;
+        });
 
-    _pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 280),
-      curve: Curves.easeOutCubic,
-    );
+        return;
+      }
+
+      final resolvedRole = await context
+          .read<UserRoleCubit>()
+          .getCurrentUserRole();
+
+      if (!mounted) return;
+
+      setState(() {
+        _currentUserRole = resolvedRole;
+        _isInitializing = false;
+      });
+    } catch (error, stackTrace) {
+      debugPrint('Session initialization failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+
+      if (!mounted) return;
+
+      setState(() {
+        _currentUserRole = null;
+        _isInitializing = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.appBackground,
-
-      // يخلي الصفحة تمتد ورا الـ floating bottom nav
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          if (currentIndex != index) {
-            setState(() {
-              currentIndex = index;
-            });
-          }
-        },
-        physics: const BouncingScrollPhysics(),
-        children: _pages,
-      ),
-
-      bottomNavigationBar: _buildBottomNavigation(),
-    );
-  }
-
-  Widget _buildBottomNavigation() {
-    return SafeArea(
-      minimum: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-      child: Container(
-        height: 72,
-        decoration: BoxDecoration(
-          color: AppColors.navyDark.withValues(alpha: 0.96),
-          borderRadius: BorderRadius.circular(AppRadius.small),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            _navItem(
-              index: 0,
-              label: 'الخدمات',
-              icon: Icons.grid_view_outlined,
-              selectedIcon: Icons.grid_view_rounded,
-            ),
-            _navItem(
-              index: 1,
-              label: 'طلباتي',
-              icon: Icons.description_outlined,
-              selectedIcon: Icons.description_rounded,
-            ),
-            _navItem(
-              index: 2,
-              label: 'الإشعارات',
-              icon: Icons.notifications_none_rounded,
-              selectedIcon: Icons.notifications_rounded,
-            ),
-            _navItem(
-              index: 3,
-              label: 'حسابي',
-              icon: Icons.person_outline_rounded,
-              selectedIcon: Icons.person_rounded,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _navItem({
-    required int index,
-    required String label,
-    required IconData icon,
-    required IconData selectedIcon,
-  }) {
-    final isSelected = currentIndex == index;
-
-    return Expanded(
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => _changePage(index),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeOutCubic,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AnimatedScale(
-                duration: const Duration(milliseconds: 220),
-                curve: Curves.easeOutCubic,
-                scale: isSelected ? 1.08 : 1,
-                child: Icon(
-                  isSelected ? selectedIcon : icon,
-                  size: 22,
-                  color: isSelected
-                      ? AppColors.secondaryButtonBackground
-                      : const Color(0xFF8298B8),
-                ),
-              ),
-
-              const SizedBox(height: 5),
-
-              AnimatedDefaultTextStyle(
-                duration: const Duration(milliseconds: 220),
-                curve: Curves.easeOutCubic,
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                  color: isSelected ? Colors.white : const Color(0xFF8298B8),
-                ),
-                child: Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
+    if (_isInitializing) {
+      return const ColoredBox(
+        color: AppColors.appBackground,
+        child: Center(
+          child: CircularProgressIndicator(
+            color: AppColors.primaryButtonBackground,
           ),
         ),
-      ),
+      );
+    }
+
+    final currentRole = _currentUserRole;
+
+    if (currentRole == null) {
+      return const AuthView();
+    }
+
+    final destinationBuilder = RoleNavigationResolver.resolve(
+      context,
+      currentRole,
     );
+
+    return destinationBuilder?.call(context) ?? const AuthView();
   }
 }

@@ -36,11 +36,11 @@ class ResetPasswordView extends StatelessWidget {
 
                   const SizedBox(height: 28),
 
-                  AppText.title('إنشاء كلمة مرور جديدة'),
+                  const AppText.title('إنشاء كلمة مرور جديدة'),
 
                   const SizedBox(height: 12),
 
-                  AppText.body(
+                  const AppText.body(
                     'أدخل كلمة المرور الجديدة لحسابك، ثم أكدها مرة أخرى.',
                   ),
 

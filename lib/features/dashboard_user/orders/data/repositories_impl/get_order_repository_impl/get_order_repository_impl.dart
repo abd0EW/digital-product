@@ -26,13 +26,43 @@ class GetOrderRepositoryImpl implements GetOrderRepository {
   }
 
   @override
+  Future<Either<OrderFailure, List<OrderModel>>> getAllOrders() async {
+    try {
+      return Right(await _remoteDataSource.getAllOrders());
+    } catch (exception) {
+      return Left(
+        CreateOrderFail(exception: exception, message: exception.toString()),
+      );
+    }
+  }
+
+  @override
+  Future<Either<OrderFailure, Unit>> assignWorker({
+    required String orderId,
+    required String workerId,
+  }) async {
+    try {
+      await _remoteDataSource.assignWorker(
+        orderId: orderId,
+        workerId: workerId,
+      );
+      return const Right(unit);
+    } catch (exception) {
+      return Left(
+        AssignWorkerFailure(
+          exception: exception,
+          message: exception.toString(),
+        ),
+      );
+    }
+  }
+
+  @override
   Future<Either<OrderFailure, OrderModel?>> getUserOrderById({
     required String orderId,
   }) async {
     try {
-      return Right(
-        await _remoteDataSource.getUserOrderById(orderId: orderId),
-      );
+      return Right(await _remoteDataSource.getUserOrderById(orderId: orderId));
     } catch (exception) {
       return Left(
         CreateOrderFail(exception: exception, message: exception.toString()),

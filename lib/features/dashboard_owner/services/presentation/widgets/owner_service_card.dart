@@ -29,10 +29,7 @@ class OwnerServiceCard extends StatelessWidget {
         children: [
           OwnerServicesCardData(service: service),
 
-          OwnerSericesCardSwitch(
-            isEnabled: service.isActive,
-            id: service.id,
-          ),
+          OwnerServicesCardSwitch(isEnabled: service.isActive, id: service.id),
         ],
       ),
     );

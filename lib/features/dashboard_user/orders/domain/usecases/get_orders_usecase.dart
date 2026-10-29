@@ -13,6 +13,20 @@ class GetOrdersUsecase {
     return _getordersRepository.getUserOrders();
   }
 
+  Future<Either<OrderFailure, List<OrderModel>>> getAllOrders() {
+    return _getordersRepository.getAllOrders();
+  }
+
+  Future<Either<OrderFailure, Unit>> assignWorker({
+    required String orderId,
+    required String workerId,
+  }) {
+    return _getordersRepository.assignWorker(
+      orderId: orderId,
+      workerId: workerId,
+    );
+  }
+
   Future<Either<OrderFailure, List<OrderFileModel>>> getOrderFilesUseCase({
     required String orderId,
   }) {
